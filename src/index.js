@@ -2,13 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import 'semantic-ui-css/semantic.min.css';
+import { createBrowserHistory } from "history";
 import reportWebVitals from './reportWebVitals';
+
+export const history = createBrowserHistory();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <App />
 );
 
 // If you want to start measuring performance in your app, pass a function
