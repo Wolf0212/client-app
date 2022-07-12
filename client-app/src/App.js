@@ -1,10 +1,14 @@
 import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
+import store from './stores/rootStore.js'
 
-function App() {
+function App(props) {
   const [number, setNumber] = useState(0)
-  useEffect(() => alert('Page reloaded!'))
+
+  const mapState = (state) => ({
+
+  })
 
   return (
     <div>
