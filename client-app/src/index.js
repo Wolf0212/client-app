@@ -2,11 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import 'semantic-ui-css/semantic.min.css';
-import { createBrowserHistory } from "history";
+import 'react-toastify/dist/ReactToastify.css';
 import reportWebVitals from './reportWebVitals';
-
-export const history = createBrowserHistory();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
