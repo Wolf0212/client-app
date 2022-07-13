@@ -1,0 +1,20 @@
+.input{
+   padding: 0.4rem;
+   border-radius: 8px;
+   border-color: darkgrey;
+   border-width: 1px;
+   width: 70%;
+   font-size: 2.4rem;
+   font-style:italic;
+}
+
+.label{
+   font-size: 2.4rem;
+}
+
+.inlineInput{
+   display: flex;
+   gap: 2.4rem;
+   width: 100%;
+   justify-content: space-between;
+}

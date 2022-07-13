@@ -1,0 +1,10 @@
+.formGroup{
+   display: flex;
+   gap: 0.8rem;
+   align-items: center;
+   margin-bottom: 1.2rem;
+}
+
+.formGroup label{
+   flex-shrink: 0;
+}
