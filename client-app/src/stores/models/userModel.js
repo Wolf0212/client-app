@@ -1,14 +1,20 @@
-export const user = {
-    state: 0,
+export const userModel = {
+    state: {
+        count: 0,
+    },
     reducers: {
-        changeState(state, payload) {
-            return state += payload;
+        incrementCount(state, payload) {
+            return {
+                ...state,
+                count: state.count + payload,
+            };
         }
     },
     effects: (dispatch) => ({
-        async changeStateAsync(payload, rootState) {
+        async incrementCountAsync(payload, rootState) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            dispatch.user.changeState(payload);
+            console.log(payload)
+            dispatch.userModel.incrementCount(payload);
         }
     })
 }

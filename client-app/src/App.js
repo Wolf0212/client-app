@@ -1,24 +1,23 @@
-import { Button } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import store from './stores/rootStore.js'
+import rootStore from './stores/rootStore.js';
+import { createBrowserHistory } from "history";
+import { Provider } from "react-redux";
+import { Router, Route, Switch } from "react-router";
+import Homepage from './pages/Homepage.js';
+import Login from './pages/Login.js';
 
-function App(props) {
-  const [number, setNumber] = useState(0)
+export const history = createBrowserHistory();
 
-  const mapState = (state) => ({
-
-  })
+function App() {
 
   return (
-    <div>
-      <ToastContainer />
-      <Button onClick={() => {
-        toast('Test toast');
-        setNumber(number + 1);
-      }} variant='outlined'>This is a MUI button</Button>
-      <h1>You click {number} times</h1>
-    </div>
+    <Provider store={rootStore}>
+      <Router history={history}>
+        <Switch>
+          <Route path={"/login"} component={Login} />
+          <Route path={["/", "/homepage"]} component={Homepage} />
+        </Switch>
+      </Router>
+    </Provider>
   );
 }
 
