@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { Router, Route, Switch } from "react-router";
 import Homepage from './pages/Homepage.js';
 import Login from './pages/Login.js';
+import Register from './pages/Register.js';
 
 export const history = createBrowserHistory();
 
@@ -14,6 +15,7 @@ function App() {
       <Router history={history}>
         <Switch>
           <Route path={"/login"} component={Login} />
+          <Route path={"/register"} component={Register} />
           <Route path={["/", "/homepage"]} component={Homepage} />
         </Switch>
       </Router>
