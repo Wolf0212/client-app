@@ -1,23 +1,13 @@
 import { Button } from "@mui/material";
 import { connect } from "react-redux";
 import Navbar from "../components/UI/Navbar";
+import PostForm from "../components/Forms/PostForm";
 import ChangePasswordForm from "../components/Forms/ChangePasswordForm";
 
 function Homepage({ count, incrementCountAsync }) {
   return (
     <div>
       <Navbar></Navbar>
-      <Button
-        variant="outlined"
-        onClick={() => {
-          incrementCountAsync(1);
-          alert("clicked");
-        }}
-      >
-        Click me
-      </Button>
-      <h1>{count} clicked</h1>
-      <ChangePasswordForm></ChangePasswordForm>
     </div>
   );
 }

@@ -1,51 +1,94 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import axios from "axios";
 
-import Input from "../Input";
-import styles from "./Forms.module.css";
+import {
+  Input,
+  Button,
+  InputLabel,
+  FormControl,
+  FormHelperText,
+} from "@mui/material";
 
-function ChangePasswordForm() {
+const ariaLabel = { "aria-label": "description" };
+
+function ChangePasswordForm(props) {
   const oldPassword = useRef();
   const newPassword = useRef();
   const confirmPassword = useRef();
+  const [isValid, setIsValid] = useState(false);
+  const [isSame, setIsSame] = useState(true);
 
   function ChangePasswordHandler(e) {
     e.preventDefault();
-    console.log(oldPassword);
-    console.log(newPassword);
-    console.log(confirmPassword);
-    debugger;
+  }
+
+  function CheckValidHandler() {
+    if (
+      oldPassword.current.value.trim() === "" ||
+      newPassword.current.value.trim() === ""
+    ) {
+    } else {
+      if (
+        newPassword.current.value.trim() !==
+        confirmPassword.current.value.trim()
+      ) {
+        setIsSame(false);
+        setIsValid(false);
+      } else {
+        setIsValid(true);
+      }
+    }
   }
 
   return (
     <form onSubmit={ChangePasswordHandler}>
-      <div className={styles.formGroup}>
+      <FormControl fullWidth="true" margin="dense">
+        <InputLabel htmlFor="oldpassword">Your password: </InputLabel>
         <Input
-          ref={oldPassword}
-          id="oldPassword"
-          label="Old Password"
+          id="oldpassword"
+          inputRef={oldPassword}
           placeholder="Old Password"
+          inputProps={ariaLabel}
           type="password"
-        ></Input>
-      </div>
-      <div className={styles.formGroup}>
+          required
+        />
+      </FormControl>
+      <FormControl fullWidth="true" margin="dense">
+        <InputLabel htmlFor="newpassword">New password: </InputLabel>
         <Input
-          ref={newPassword}
-          id="newPassword"
-          label="New Password"
+          id="newpassword"
+          inputRef={newPassword}
           placeholder="New Password"
           type="password"
-        ></Input>
-      </div>
-      <div className={styles.formGroup}>
+          inputProps={ariaLabel}
+          onBlur={CheckValidHandler}
+          required
+        />
+      </FormControl>
+      <FormControl fullWidth="true" margin="dense">
+        <InputLabel htmlFor="confirmpassword">
+          Confirm new password:{" "}
+        </InputLabel>
         <Input
-          ref={confirmPassword}
-          id="confirmPassword"
-          label="Confirm New Password"
-          placeholder="Confirm New Password"
+          id="confirmpassword"
+          inputRef={confirmPassword}
+          placeholder="Confirm Password"
+          inputProps={ariaLabel}
           type="password"
-        ></Input>
-      </div>
-      <button>Confirm</button>
+          onBlur={CheckValidHandler}
+          required
+        />
+        <FormHelperText id="confirmpassword">
+          {isSame === false ? "The password doesn't match." : ""}
+        </FormHelperText>
+      </FormControl>
+      <Button
+        disabled={isValid === true ? false : true}
+        type="submit"
+        variant="contained"
+      >
+        Confirm
+      </Button>
     </form>
   );
 }
