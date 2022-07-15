@@ -19,7 +19,7 @@ const schema = yup.object().shape({
     confirmPassword: yup.string().oneOf([yup.ref("password"), null]),
 })
 
-function Login() {
+function Login({history}) {
     const { register, handleSubmit, control, formState: { errors }, unregister } = useForm({
         resolver: yupResolver(schema),
     });
@@ -37,7 +37,6 @@ function Login() {
 
     const onSuccess = async () => {
         setLoading(true);
-        alert("Inside onsuccess")
         const payload = {
             username: username_reg.current.value,
             password: password_reg.current.value,
@@ -45,7 +44,10 @@ function Login() {
             firstName: firstName.current.value,
             lastName: lastName.current.value, 
         }
-        await axios.post(API_URL + "/Users", payload).then(() => {
+        await axios.post(API_URL + "/Users", payload).catch((error) => {
+            console.log(error);
+            setLoading(false);
+        }).then(() => {
             toast.success("Register successfully");
             moveImage('login');
             setLoading(false);
@@ -63,6 +65,7 @@ function Login() {
         await axios.post(API_URL + "/authentication", payload).then((data) => {
             localStorage.setItem("token", data.data);
             setLoading(false);
+            history.push("/");
         })
     }
 
