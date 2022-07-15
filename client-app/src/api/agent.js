@@ -1,10 +1,9 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-axios.interceptors.response.use(undefined, function(error) {
-    if (error.message === "Network Error" && !error.response) {
-        toast.error("Network error - Make sure API is running properly");
-    }
+axios.interceptors.response.use(undefined, function (error) {
+    console.log(error.toJSON());
+    throw error;
 });
 
 axios.defaults.headers.common["Authorization"] = "Bearer" + localStorage.token;
