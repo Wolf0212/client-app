@@ -9,4 +9,4 @@ axios.interceptors.response.use(undefined, function(error) {
 
 axios.defaults.headers.common["Authorization"] = "Bearer" + localStorage.token;
 
-export default API_URL = "http://localhost:5001/odata";
+export const API_URL = "https://localhost:44321/odata";

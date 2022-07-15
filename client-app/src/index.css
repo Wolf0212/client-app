@@ -1,7 +1,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -13,3 +13,9 @@ code {
     monospace;
 }
 
+<<<<<<< HEAD
+=======
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+>>>>>>> 0fd8e9b76fe375e4205ada1958566ec797d0f36f
