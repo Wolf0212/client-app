@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller } from "react-hook-form";
 import axios from 'axios';
 import { API_URL } from '../api/agent.js';
-import { toast }  from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const schema = yup.object().shape({
     firstName: yup.string().required(),
@@ -19,7 +19,7 @@ const schema = yup.object().shape({
     confirmPassword: yup.string().oneOf([yup.ref("password"), null]),
 })
 
-function Login({history}) {
+function Login({ history }) {
     const { register, handleSubmit, control, formState: { errors }, unregister } = useForm({
         resolver: yupResolver(schema),
     });
@@ -42,14 +42,14 @@ function Login({history}) {
             password: password_reg.current.value,
             email: email.current.value,
             firstName: firstName.current.value,
-            lastName: lastName.current.value, 
+            lastName: lastName.current.value,
         }
-        await axios.post(API_URL + "/Users", payload).catch((error) => {
-            console.log(error);
-            setLoading(false);
-        }).then(() => {
+        await axios.post(API_URL + "/Users", payload).then((response) => {
             toast.success("Register successfully");
             moveImage('login');
+            setLoading(false);
+        }, (error) => {
+            toast.error("Error: " + error.response.data.value);
             setLoading(false);
         })
     }
@@ -66,12 +66,17 @@ function Login({history}) {
             localStorage.setItem("token", data.data);
             setLoading(false);
             history.push("/");
+        }, (error) => {
+            if (error.response.status === 401) {
+                toast.error("Invalid credentials");
+            }
+            setLoading(false);
         })
     }
 
     function moveImage(location) {
         if (location === 'register') {
-            document.getElementById('wrapper').style.left = '100%';
+            document.getElementById('wrapper').style.left = '100.2%';
             document.getElementById('right-panel').style.opacity = '0%';
             document.getElementById('left-panel').style.opacity = '100%';
         }
@@ -84,8 +89,8 @@ function Login({history}) {
 
     return (
         <div className='bg-gradient-to-br from-pink-400 to-pink-50 min-w-screen min-h-screen flex justify-center items-center pt-4 pb-4'>
-            <div className='border rounded-lg ml-5 mr-5 grid lg:grid-cols-2 grid-cols-1 lg:w-7/12 w-full h-2/3 shadow shadow-pink-200'>
-                <div className='bg-pink-100 overflow-visible flex flex-col items-center justify-center relative '>
+            <div className='rounded-lg ml-5 mr-5 grid lg:grid-cols-2 grid-cols-1 lg:w-7/12 w-full h-2/3 shadow shadow-pink-200'>
+                <div className='bg-pink-100 overflow-visible flex flex-col items-center justify-center relative border rounded-l-md'>
                     <div className='transition-all duration-300 opacity-0 p-10 grow w-full' id='left-panel'>
                         <form onSubmit={handleSubmit(onSuccess)}>
                             <Box className=' rounded-l-none grid grid-cols-2 gap-6 h-full'>
@@ -120,7 +125,7 @@ function Login({history}) {
                                         ),
                                     }} />}
                                 />
-                                 <Controller control={control}
+                                <Controller control={control}
                                     name="password"
                                     render={() => <TextField inputRef={password_reg} helperText={errors.password && "Password is required"} error={errors.password && true} {...register("password")} name="password" type="password" className='col-span-2' variant='outlined' label='Password' placeholder='Your password' InputProps={{
                                         startAdornment: (
@@ -130,7 +135,7 @@ function Login({history}) {
                                         ),
                                     }} />}
                                 />
-                                 <Controller control={control}
+                                <Controller control={control}
                                     name="confrimPassword"
                                     render={() => <TextField helperText={errors.confirmPassword && "Password do not match!"} error={errors.confirmPassword && true} {...register("confirmPassword")} name="confirmPassword" type="password" className='col-span-2' variant='outlined' label='Re-enter password' placeholder='Re-enter your password' InputProps={{
                                         startAdornment: (
@@ -156,7 +161,7 @@ function Login({history}) {
                         <img src={logo} alt='test' />
                     </div>
                 </div>
-                <div className='bg-pink-100 h-full w-full flex justify-center items-center'>
+                <div className='bg-pink-100 h-full w-full flex justify-center items-center border rounded-r-md'>
                     <div className='h-full w-full opacity-100 transition-all duration-300' id='right-panel'>
                         <form className='h-full w-full' onSubmit={handleLogin}>
                             <Box className=' p-10 flex gap-2 flex-col justify-center h-full'>
@@ -172,7 +177,7 @@ function Login({history}) {
                                     <KeyOutlined sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
                                     <TextField inputRef={password_login} id="password" type="password" variant="standard" fullWidth placeholder='Type your password' />
                                 </Box>
-                                <FormControlLabel control={<Checkbox defaultChecked inputRef={rememberMe}/>} label="Remember me" className='pt-4 pb-3' />
+                                <FormControlLabel control={<Checkbox defaultChecked inputRef={rememberMe} />} label="Remember me" className='pt-4 pb-3' />
                                 <LoadingButton loading={loading} variant='contained' type='submit'>Login</LoadingButton>
                                 <div className='pb-10'></div>
                                 <Button color='secondary' underline='none' onClick={() => moveImage('register')}>
