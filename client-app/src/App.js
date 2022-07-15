@@ -5,6 +5,7 @@ import { Router, Route, Switch } from "react-router";
 import Homepage from './pages/Homepage.js';
 import Login from './pages/Login.js';
 import Register from './pages/Register.js';
+import { ToastContainer } from 'react-toastify';
 
 export const history = createBrowserHistory();
 
@@ -12,6 +13,7 @@ function App() {
 
   return (
     <Provider store={rootStore}>
+      <ToastContainer />
       <Router history={history}>
         <Switch>
           <Route path={"/login"} component={Login} />
