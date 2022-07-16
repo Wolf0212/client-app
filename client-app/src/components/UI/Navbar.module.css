@@ -1,24 +1,14 @@
-.navbar{
-   background-color: red;
-   display: flex;
-   justify-content: space-between;
-   max-width: 75%;
-   margin: 0 auto;
-   align-items: center;
-   
-}
-
-.logo{
+.logo {
    font-weight: 700;
    font-size: 4.8rem;
    margin-left: 2.4rem;
 }
 
-.navList{
+.navList {
    margin-right: 2.4rem;
 }
 
-.navList ul{
+.navList ul {
    list-style-type: none;
    display: flex;
    gap: 2.4rem;

@@ -9,6 +9,8 @@ import { useForm, Controller } from "react-hook-form";
 import axios from 'axios';
 import { API_URL } from '../api/agent.js';
 import { toast } from 'react-toastify';
+import { moveImage } from '../assets/misc/animation';
+import { decodeJwt } from '../assets/misc/utilities';
 
 const schema = yup.object().shape({
     firstName: yup.string().required(),
@@ -20,7 +22,7 @@ const schema = yup.object().shape({
 })
 
 function Login({ history }) {
-    const { register, handleSubmit, control, formState: { errors }, unregister } = useForm({
+    const { register, handleSubmit, control, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
 
@@ -35,6 +37,8 @@ function Login({ history }) {
 
     const [loading, setLoading] = useState(false);
 
+
+
     const onSuccess = async () => {
         setLoading(true);
         const payload = {
@@ -44,7 +48,7 @@ function Login({ history }) {
             firstName: firstName.current.value,
             lastName: lastName.current.value,
         }
-        await axios.post(API_URL + "/Users", payload).then((response) => {
+        await axios.post(API_URL + "/Users", payload).then(() => {
             toast.success("Register successfully");
             moveImage('login');
             setLoading(false);
@@ -64,6 +68,10 @@ function Login({ history }) {
         }
         await axios.post(API_URL + "/authentication", payload).then((data) => {
             localStorage.setItem("token", data.data);
+            var decoded = decodeJwt(data.data);
+            localStorage.setItem("email", decoded.Email);
+            localStorage.setItem("username", decoded.Username);
+            localStorage.setItem("uid", decoded.UserId);
             setLoading(false);
             history.push("/");
         }, (error) => {
@@ -72,19 +80,6 @@ function Login({ history }) {
             }
             setLoading(false);
         })
-    }
-
-    function moveImage(location) {
-        if (location === 'register') {
-            document.getElementById('wrapper').style.left = '100.2%';
-            document.getElementById('right-panel').style.opacity = '0%';
-            document.getElementById('left-panel').style.opacity = '100%';
-        }
-        if (location === 'login') {
-            document.getElementById('wrapper').style.left = '0%';
-            document.getElementById('right-panel').style.opacity = '100%';
-            document.getElementById('left-panel').style.opacity = '0%';
-        }
     }
 
     return (
@@ -171,7 +166,6 @@ function Login({ history }) {
                                     <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
                                     <TextField inputRef={username_login} id="email" placeholder='Type your email' variant="standard" fullWidth />
                                 </Box>
-
                                 <label htmlFor="password" className='pt-4'>Password</label>
                                 <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                                     <KeyOutlined sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
@@ -188,10 +182,7 @@ function Login({ history }) {
                         </form>
                     </div>
                 </div>
-
-
             </div>
-
         </div >
     )
 }
