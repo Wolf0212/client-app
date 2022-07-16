@@ -66,7 +66,7 @@ function Homepage({ count, incrementCountAsync }) {
       <div className="w-3/4 lg:w-full flex justify-center pl-10 pr-10">
         <Grid container className="pt-10 mb-10 justify-center" spacing={4}>
           <Grid item xs={9}>
-            <div className="flex flex-col">
+            <div className="flex justify-between">
 
             </div>
             <ImageList variant="standard" cols={4} gap={16}>
