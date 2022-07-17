@@ -23,15 +23,15 @@ export const PostItem = (props) => {
                             <Typography variant="caption" sx={{ fontSize: "14px" }}>Username</Typography>
                             <Typography variant="caption" className="flex items-center">
                                 <AccessTime fontSize="small" />
-                                <span className="mt-1 mr-1">
+                                <span className="mr-1">
                                     12/02/2001 &#8226;
                                 </span>
                                 <Favorite fontSize="small" sx={{ color: pink[100] }} />
-                                <span className="mt-1 ml-1 mr-1">
+                                <span className="ml-1 mr-1">
                                     200 &#8226;
                                 </span>
                                 <QuestionAnswer fontSize="small" sx={{ color: pink[100] }} />
-                                <span className="mt-1">
+                                <span className="ml-1">
                                     100
                                 </span>
                             </Typography>
