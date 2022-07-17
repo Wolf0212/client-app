@@ -53,7 +53,6 @@ function Login({ history }) {
             moveImage('login');
             setLoading(false);
         }, (error) => {
-            toast.error("Error: " + error.response.data.value);
             setLoading(false);
         })
     }
@@ -74,10 +73,7 @@ function Login({ history }) {
             localStorage.setItem("uid", decoded.UserId);
             setLoading(false);
             history.push("/");
-        }, (error) => {
-            if (error.response.status === 401) {
-                toast.error("Invalid credentials");
-            }
+        }, () => {
             setLoading(false);
         })
     }

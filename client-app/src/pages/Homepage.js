@@ -1,12 +1,7 @@
-import { Button, Grid, IconButton, ImageList, ImageListItem, ImageListItemBar, Paper, TextField, Typography } from "@mui/material";
-import { connect } from "react-redux";
+import { Grid } from "@mui/material";
 import Navbar from "../components/UI/Navbar";
-import PostForm from "../components/Forms/PostForm";
-import ChangePasswordForm from "../components/Forms/ChangePasswordForm";
-import { Container } from "@mui/system";
-import { Favorite, FavoriteBorder, Filter, FilterListOutlined } from "@mui/icons-material";
-import { pink } from "@mui/material/colors";
-import { FilterBar } from "../components/Forms/FilterBar"
+import { PostItem } from "../components/PostItem";
+import { SelectionBar } from "../components/SelectionBar";
 
 const itemData = [
   {
@@ -59,55 +54,25 @@ const itemData = [
   },
 ];
 
-function Homepage({ count, incrementCountAsync }) {
+function Homepage() {
+
+
   return (
     <div>
       <Navbar></Navbar>
-      <div className="w-3/4 lg:w-full flex justify-center pl-10 pr-10">
+      <div className="w-full md:w-11/12 lg:w-10/12 pl-10 pr-10 flex justify-center mx-auto">
         <Grid container className="pt-10 mb-10 justify-center" spacing={4}>
-          <Grid item xs={9}>
-            <div className="flex justify-between">
-
-            </div>
-            <ImageList variant="standard" cols={4} gap={16}>
+          <Grid item>
+            <SelectionBar />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {itemData.map((item) => (
-                <ImageListItem className="relative" key={item.img}>
-                  <a href="/post-detail" className="absolute w-full h-full" />
-                  <img
-                    src={item.img}
-                    srcSet={item.img}
-                    alt={item.title}
-                    loading="lazy"
-                  />
-                  <ImageListItemBar
-                    position="bottom"
-                    title={<div className="font-bold text-lg">Title of the post</div>}
-                    subtitle={<div className="text-slate-300">This is subtitle</div>}
-                    actionIcon={
-                      <IconButton sx={{ color: pink[100] }}>
-                        <FavoriteBorder />
-                      </IconButton>
-                    }
-                  />
-                </ImageListItem>
+                <PostItem key={item.img} item={item} />
               ))}
-            </ImageList>
-          </Grid>
-          <Grid item xs={3}>
-            <FilterBar />
+            </div>
           </Grid>
         </Grid>
       </div>
     </div >
   );
 }
-
-const mapStateToProps = (dispatch) => ({
-  count: dispatch.userModel.count,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  incrementCountAsync: dispatch.userModel.incrementCountAsync,
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Homepage);
+export default Homepage;

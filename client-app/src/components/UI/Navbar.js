@@ -1,4 +1,4 @@
-import { Box, Typography, AppBar, Toolbar, IconButton, Menu, MenuItem, Button, TextField, InputAdornment, Tooltip, Avatar, ListItemIcon, Divider } from "@mui/material";
+import { Box, AppBar, Toolbar, IconButton, Menu, MenuItem, Button, TextField, InputAdornment, Avatar, ListItemIcon, Divider } from "@mui/material";
 
 import { useState } from "react";
 import logo from ".././../assets/images/Logo.png";
@@ -56,17 +56,17 @@ function Navbar({ history }) {
       <Container maxWidth="xl">
         <Toolbar className="gap-4 justify-between" disableGutters>
           <img src={logo} alt="logo" />
-          <IconButton sx={{ display: { xs: 'flex', sm: 'none' } }}><AddCircle fontSize="large" className="text-pink-300" /></IconButton>
-          <Button sx={{ display: { xs: 'none', sm: 'flex', backgroundColor: pink[200] } }} variant="contained" startIcon={<AddBox />}>New post</Button>
+          <IconButton href="/post-form/create" sx={{ display: { xs: 'flex', sm: 'none' } }}><AddCircle fontSize="large" className="text-pink-300" /></IconButton>
+          <Button href="/post-form/create" sx={{ display: { xs: 'none', sm: 'flex', backgroundColor: pink[200] } }} variant="contained" startIcon={<AddBox />}>New post</Button>
           <div className="grow flex sm:flex justify-center ">
-            <TextField size="small" className="grow max-w-sm bg-slate-100" variant="outlined" placeholder="Search..." type="search"
+            <TextField size="small" className="grow max-w-sm bg-slate-100" variant="outlined" placeholder="Search anything here!" type="search"
               InputProps={{
                 endAdornment: <InputAdornment position="end"><Search /></InputAdornment>
               }} />
           </div>
           {localStorage.token ? <Box className="flex gap-4 min-h">
             <div onClick={handleClick} className="cursor-pointer">
-              <span className="text-center mr-3 text-slate-700 font-bold text-lg">{localStorage.username}</span>
+              <span className="text-center mr-3 text-slate-700 font-bold text-lg truncate">{localStorage.username}</span>
               <Avatar sx={{ display: "inline-flex", width: '37px', height: '37px' }} alt={localStorage.username} src="/static/images/avatar/2.jpg" />
             </div>
             <Menu
@@ -122,7 +122,7 @@ function Navbar({ history }) {
                 </ListItemIcon>
                 Settings
               </MenuItem>
-              <MenuItem>
+              <MenuItem onClick={() => handleUserClick('Logout')}>
                 <ListItemIcon>
                   <Logout />
                 </ListItemIcon>
@@ -135,7 +135,6 @@ function Navbar({ history }) {
               <Button href="/login" variant="contained">Sign up</Button>
             </div>
           }
-
         </Toolbar>
       </Container>
     </AppBar >

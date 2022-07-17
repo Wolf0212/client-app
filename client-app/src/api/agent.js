@@ -2,7 +2,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 axios.interceptors.response.use(undefined, function (error) {
-    console.log(error.toJSON());
+    if (error.response.status === 400) {
+        toast.error("Check your input again!");
+    }
+    if (error.response.status === 401) {
+        toast.error("Invalid credentials!");
+    }
     throw error;
 });
 
