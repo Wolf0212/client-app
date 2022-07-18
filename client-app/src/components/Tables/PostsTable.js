@@ -16,10 +16,24 @@ import {
   Search,
 } from "@mui/icons-material";
 
+import { useEffect } from "react";
+
+import axios from "axios";
+
 const PostsTable = () => {
   const SubmitHandler = (e) => {
     e.preventDefault();
   };
+
+  const setAxiosDefaultHeader = () => {
+    axios.defaults.headers = {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    };
+  };
+
+  useEffect(() => {
+    setAxiosDefaultHeader();
+  });
 
   return (
     <Container>

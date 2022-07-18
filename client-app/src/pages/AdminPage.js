@@ -19,6 +19,16 @@ const AdminPage = (props) => {
         <Col>
           <Switch>
             <Route path="/admin/users" component={UsersTable}></Route>
+            <Route path="/admin/users/form" component={UsersTable}></Route>
+            <Route
+              path="/admin/users/:id/details"
+              component={UsersTable}
+            ></Route>
+            <Route path="/admin/users/:id/form" component={UsersTable}></Route>
+            <Route
+              path="/admin/users/:id/delete"
+              component={UsersTable}
+            ></Route>
             <Route path="/admin/posts" component={PostsTable}></Route>
             <Route path="/admin/reports" component={ReportsTable}></Route>
             <Route path="/admin/tags" component={TagsTable}></Route>

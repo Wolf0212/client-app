@@ -1,7 +1,31 @@
-import { Table, Container } from "react-bootstrap";
+import { Table, Container, Col, Row, Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+import {
+  Info,
+  Edit,
+  VisibilityOff,
+  Visibility,
+  Search,
+} from "@mui/icons-material";
+
+import axios from "axios";
+
+import { useEffect } from "react";
+
 const UsersTable = () => {
+  const setAxiosDefaultHeader = () => {
+    axios.defaults.headers = {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    };
+  };
+
+  useEffect(() => {
+    setAxiosDefaultHeader();
+  });
+
+  const SubmitHandler = () => {};
+
   return (
     <Container>
       <h1
@@ -10,6 +34,30 @@ const UsersTable = () => {
       >
         User Management
       </h1>
+      <Row className="justify-content-between mb-3">
+        <Col xs={2}>
+          <Button as={Link} to="/admin/posts/create" variant="primary">
+            +Add new
+          </Button>
+        </Col>
+        <Col xs={4}>
+          <Form onSubmit={SubmitHandler}>
+            <Row>
+              <Col xs={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Search post with name.."
+                ></Form.Control>
+              </Col>
+              <Col xs={4}>
+                <Button className="text-teal-800" variant="info" type="submit">
+                  <Search></Search>
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
+      </Row>
       <Table>
         <thead>
           <tr>
@@ -27,11 +75,17 @@ const UsersTable = () => {
             <td>TranPham</td>
             <td>KimSon</td>
             <td>
-              <Link to="/admin/users/details">Details</Link>
+              <Link to={`/admin/users/${1}/details`}>
+                <Info />
+              </Link>
               {" | "}
-              <Link to="/admin/users/edit">Edit</Link>
+              <Link to={`/admin/users/${1}/edit`}>
+                <Edit></Edit>
+              </Link>
               {" | "}
-              <Link to="/admin/users/toggle">Toggle</Link>
+              <Link to={`/admin/users/${1}/toggle`}>
+                <VisibilityOff></VisibilityOff>
+              </Link>
             </td>
           </tr>
         </tbody>
