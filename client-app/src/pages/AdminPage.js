@@ -7,7 +7,8 @@ import UsersTable from "../components/Tables/UsersTable";
 import PostsTable from "../components/Tables/PostsTable";
 import ReportsTable from "../components/Tables/ReportsTable";
 import TagsTable from "../components/Tables/TagsTable";
-// import "./AdminPage.css";
+import Report from "../components/Report/Report";
+import UserForm from "../components/Forms/UserForm";
 
 const AdminPage = (props) => {
   return (
@@ -18,8 +19,9 @@ const AdminPage = (props) => {
         </Col>
         <Col>
           <Switch>
+            <Route path="/admin/users/form" component={UserForm}></Route>
             <Route path="/admin/users" component={UsersTable}></Route>
-            <Route path="/admin/users/form" component={UsersTable}></Route>
+            <Route path="/admin/report" component={Report}></Route>
             <Route
               path="/admin/users/:id/details"
               component={UsersTable}
