@@ -1,8 +1,26 @@
-import { Table, Container, Row, Button } from "react-bootstrap";
+import {
+  Table,
+  Container,
+  Row,
+  Button,
+  Col,
+  Form,
+  Pagination,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { Info, Edit, VisibilityOff, Visibility } from "@mui/icons-material";
+import {
+  Info,
+  Edit,
+  VisibilityOff,
+  Visibility,
+  Search,
+} from "@mui/icons-material";
 
 const PostsTable = () => {
+  const SubmitHandler = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <Container>
       <h1
@@ -11,10 +29,29 @@ const PostsTable = () => {
       >
         Post Management
       </h1>
-      <Row>
-        <Button className="text-blue-800" variant="primary">
-          Primary
-        </Button>
+      <Row className="justify-content-between mb-3">
+        <Col xs={2}>
+          <Button as={Link} to="/admin/posts/create" variant="primary">
+            +Add new
+          </Button>
+        </Col>
+        <Col xs={4}>
+          <Form onSubmit={SubmitHandler}>
+            <Row>
+              <Col xs={8}>
+                <Form.Control
+                  type="text"
+                  placeholder="Search post with name.."
+                ></Form.Control>
+              </Col>
+              <Col xs={4}>
+                <Button className="text-teal-800" variant="info" type="submit">
+                  <Search></Search>
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
       </Row>
       <Table>
         <thead>
@@ -48,6 +85,13 @@ const PostsTable = () => {
           </tr>
         </tbody>
       </Table>
+      <Pagination>
+        <Pagination.Prev />
+        <Pagination.Item>{1}</Pagination.Item>
+        <Pagination.Item>{2}</Pagination.Item>
+        <Pagination.Item>{3}</Pagination.Item>
+        <Pagination.Next />
+      </Pagination>
     </Container>
   );
 };
