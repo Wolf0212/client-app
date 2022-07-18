@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   return (
-    <div style={{ width: "15%", height: "100vh", backgroundColor: "black" }}>
+    <div
+      className="pl-4"
+      style={{ width: "100%", height: "100vh", backgroundColor: "black" }}
+    >
       Onlyfunds
       <Nav navbarScroll as="ul">
         <Nav.Item as="li">

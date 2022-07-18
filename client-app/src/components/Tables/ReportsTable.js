@@ -1,21 +1,15 @@
-import { Table, Container, Row, Button } from "react-bootstrap";
+import { Table, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { Info, Edit, VisibilityOff, Visibility } from "@mui/icons-material";
 
-const PostsTable = () => {
+const ReportsTable = () => {
   return (
     <Container>
       <h1
         className="mb-5 mt-3"
         style={{ fontWeight: "bold", fontSize: "2rem" }}
       >
-        Post Management
+        Reports Management
       </h1>
-      <Row>
-        <Button className="text-blue-800" variant="primary">
-          Primary
-        </Button>
-      </Row>
       <Table>
         <thead>
           <tr>
@@ -33,17 +27,11 @@ const PostsTable = () => {
             <td>TranPham</td>
             <td>KimSon</td>
             <td>
-              <Link to="/admin/posts/details">
-                <Info />
-              </Link>
+              <Link to="/admin/reports/details">Details</Link>
               {" | "}
-              <Link to="/admin/posts/edit">
-                <Edit></Edit>
-              </Link>
+              <Link to="/admin/reports/edit">Edit</Link>
               {" | "}
-              <Link to="/admin/posts/toggle">
-                <VisibilityOff></VisibilityOff>
-              </Link>
+              <Link to="/admin/reports/toggle">Toggle</Link>
             </td>
           </tr>
         </tbody>
@@ -51,5 +39,4 @@ const PostsTable = () => {
     </Container>
   );
 };
-
-export default PostsTable;
+export default ReportsTable;
