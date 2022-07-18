@@ -9,7 +9,6 @@ import { useForm, Controller } from "react-hook-form";
 import axios from 'axios';
 import { API_URL } from '../api/agent.js';
 import { toast } from 'react-toastify';
-import { moveImage } from '../assets/misc/animation';
 import { decodeJwt } from '../assets/misc/utilities';
 
 const schema = yup.object().shape({
@@ -78,11 +77,24 @@ function Login({ history }) {
         })
     }
 
+    function moveImage(location) {
+        if (location === 'register') {
+            document.getElementById('wrapper').style.left = '100.2%';
+            document.getElementById('right-panel').style.opacity = '0%';
+            document.getElementById('left-panel').style.opacity = '100%';
+        }
+        if (location === 'login') {
+            document.getElementById('wrapper').style.left = '0%';
+            document.getElementById('right-panel').style.opacity = '100%';
+            document.getElementById('left-panel').style.opacity = '0%';
+        }
+    }
+
     return (
         <div className='bg-gradient-to-br from-pink-400 to-pink-50 min-w-screen min-h-screen flex justify-center items-center pt-4 pb-4'>
             <div className='rounded-lg ml-5 mr-5 grid lg:grid-cols-2 grid-cols-1 lg:w-7/12 w-full h-2/3 shadow shadow-pink-200'>
-                <div className='bg-pink-100 overflow-visible flex flex-col items-center justify-center relative border rounded-l-md'>
-                    <div className='transition-all duration-300 opacity-0 p-10 grow w-full' id='left-panel'>
+                <div className='bg-pink-100 overflow-visible flex flex-col items-center justify-center relative rounded-l-md'>
+                    <div className='transition-all duration-300 opacity-100 p-10 grow w-full' id='left-panel'>
                         <form onSubmit={handleSubmit(onSuccess)}>
                             <Box className=' rounded-l-none grid grid-cols-2 gap-6 h-full'>
                                 <h1 className='col-span-2 text-4xl text-pink-400 font-bold pb-6 text-center' style={{ fontFamily: 'Comic Sans MS' }}>Sign up</h1>
@@ -152,7 +164,7 @@ function Login({ history }) {
                         <img src={logo} alt='test' />
                     </div>
                 </div>
-                <div className='bg-pink-100 h-full w-full flex justify-center items-center border rounded-r-md'>
+                <div className='bg-pink-100 h-full w-full flex justify-center items-center rounded-r-md'>
                     <div className='h-full w-full opacity-100 transition-all duration-300' id='right-panel'>
                         <form className='h-full w-full' onSubmit={handleLogin}>
                             <Box className=' p-10 flex gap-2 flex-col justify-center h-full'>
