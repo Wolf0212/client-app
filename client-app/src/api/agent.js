@@ -11,6 +11,7 @@ axios.interceptors.response.use(undefined, function (error) {
     if (error.response.status === 401) {
         toast.error("Invalid credentials!");
     }
+    console.log(error.toJSON());
     throw error;
 });
 
