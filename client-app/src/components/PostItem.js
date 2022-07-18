@@ -1,11 +1,12 @@
 import React from 'react'
-import { Avatar, IconButton, ImageListItem, ImageListItemBar, Typography } from "@mui/material";
-import { AccessTime, BookmarkAdd, Favorite, QuestionAnswer } from "@mui/icons-material";
+import { Avatar, ImageListItem, ImageListItemBar, Typography } from "@mui/material";
+import { AccessTime, Favorite } from "@mui/icons-material";
 import { pink } from "@mui/material/colors";
 
 export const PostItem = (props) => {
+    
     return (
-        <div>
+        <div className='hover:shadow-pink-500 transition-all duration-300'>
             <ImageListItem className="relative" style={{ height: '100%' }}>
                 <a href="/post-detail" className="absolute w-full h-full" />
                 <img
@@ -15,6 +16,7 @@ export const PostItem = (props) => {
                     loading="lazy"
                 />
                 <ImageListItemBar
+                    
                     position="bottom"
                     title={<div className="font-bold text-lg truncate">Title of the post</div>}
                     subtitle={<div className="text-slate-300 flex gap-2 items-center">
@@ -28,11 +30,7 @@ export const PostItem = (props) => {
                                 </span>
                                 <Favorite fontSize="small" sx={{ color: pink[100] }} />
                                 <span className="ml-1 mr-1">
-                                    200 &#8226;
-                                </span>
-                                <QuestionAnswer fontSize="small" sx={{ color: pink[100] }} />
-                                <span className="ml-1">
-                                    100
+                                    200 
                                 </span>
                             </Typography>
                         </div>
