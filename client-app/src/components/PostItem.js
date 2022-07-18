@@ -37,11 +37,6 @@ export const PostItem = (props) => {
                             </Typography>
                         </div>
                     </div>}
-                    actionIcon={
-                        <IconButton sx={{ color: pink[100] }}>
-                            <BookmarkAdd />
-                        </IconButton>
-                    }
                 />
             </ImageListItem>
         </div>

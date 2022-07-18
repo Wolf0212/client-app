@@ -45,9 +45,9 @@ export const SelectionBar = () => {
                     size="small"
                 >
                     {categoryList.map((category) => (
-                        <MenuItem key={category} value={category}>
-                            <Checkbox checked={categories.indexOf(category) > -1} />
-                            <ListItemText primary={category} />
+                        <MenuItem key={category.id} value={category.id}>
+                            <Checkbox checked={categories.indexOf(category.name) > -1} />
+                            <ListItemText primary={category.name} />
                         </MenuItem>
                     ))}
                 </Select>

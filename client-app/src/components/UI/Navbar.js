@@ -55,7 +55,9 @@ function Navbar({ history }) {
     <AppBar position="sticky" className="text-slate-600" color="inherit" sx={{ backgroundColor: "rgb(252, 231, 243)", }}>
       <Container maxWidth="xl">
         <Toolbar className="gap-4 justify-between" disableGutters>
-          <img src={logo} alt="logo" />
+          <a href="/">
+            <img src={logo} alt="logo" />
+          </a>
           <IconButton href="/post-form/create" sx={{ display: { xs: 'flex', sm: 'none' } }}><AddCircle fontSize="large" className="text-pink-300" /></IconButton>
           <Button href="/post-form/create" sx={{ display: { xs: 'none', sm: 'flex', backgroundColor: pink[200] } }} variant="contained" startIcon={<AddBox />}>New post</Button>
           <div className="grow flex sm:flex justify-center ">
@@ -66,6 +68,8 @@ function Navbar({ history }) {
           </div>
           {localStorage.token ? <Box className="flex gap-4 min-h">
             <div onClick={handleClick} className="cursor-pointer">
+            <img src="https://masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg"/>
+
               <span className="text-center mr-3 text-slate-700 font-bold text-lg truncate">{localStorage.username}</span>
               <Avatar sx={{ display: "inline-flex", width: '37px', height: '37px' }} alt={localStorage.username} src="/static/images/avatar/2.jpg" />
             </div>
