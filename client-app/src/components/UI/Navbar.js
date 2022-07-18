@@ -68,8 +68,6 @@ function Navbar({ history }) {
           </div>
           {localStorage.token ? <Box className="flex gap-4 min-h">
             <div onClick={handleClick} className="cursor-pointer">
-            <img src="https://masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg"/>
-
               <span className="text-center mr-3 text-slate-700 font-bold text-lg truncate">{localStorage.username}</span>
               <Avatar sx={{ display: "inline-flex", width: '37px', height: '37px' }} alt={localStorage.username} src="/static/images/avatar/2.jpg" />
             </div>

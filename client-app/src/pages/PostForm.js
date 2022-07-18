@@ -25,14 +25,14 @@ export const PostForm = () => {
 
   const [categories, setCategories] = useState([]);
 
-    const handleCatChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        setCategories(
-            typeof value === 'string' ? value.split(',') : value,
-        );
-    };
+  const handleCatChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setCategories(
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
 
   const PreviewFile = () => {
     let temp = "This type is not supported";
@@ -99,8 +99,8 @@ export const PostForm = () => {
     <div>
       <Navbar></Navbar>
       <form onSubmit={SubmitFormHandler} className="w-full md:w-11/12 lg:w-10/12 mx-auto lg:p-10 md:p-5 sm:p-2">
-        <Backdrop open={loading} sx={{zIndex: "9999"}}>
-          <CircularProgress color="inherit"/>
+        <Backdrop open={loading} sx={{ zIndex: "9999" }}>
+          <CircularProgress color="inherit" />
         </Backdrop>
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-2">
@@ -110,7 +110,7 @@ export const PostForm = () => {
                 Post's data
               </Typography>
               <div className="text-lg font-bold text-neutral-600">Title of your post</div>
-              <TextField size="small" fullWidth margin="dense" ref={title} placeholder="Preview of your post" />
+              <TextField size="small" fullWidth margin="dense" ref={title} placeholder="Preview of your post" variant="filled" />
               <div className="text-lg font-bold text-neutral-600 mt-3">Description</div>
               <TextField multiline ref={description} size="small" fullWidth margin="dense" placeholder="What is your post about?" rows={6} />
               <hr className="mt-4 mb-4" />
@@ -176,7 +176,7 @@ export const PostForm = () => {
                   ))}
                 </Select>
               </FormControl>
-              <Button variant="contained" fullWidth type="submit" sx={{mt: "16px;"}}>Create post</Button>
+              <Button variant="contained" fullWidth type="submit" sx={{ mt: "16px;" }}>Create post</Button>
             </Paper>
           </div>
         </div>
