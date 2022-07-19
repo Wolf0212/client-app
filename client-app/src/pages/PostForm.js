@@ -1,19 +1,18 @@
-import { Button, Paper, Typography, TextField, FormControl, Select, MenuItem, Checkbox, ListItemText, Tooltip, Backdrop, CircularProgress } from "@mui/material";
+import { Button, Paper, Typography, TextField, FormControl, Select, MenuItem, Checkbox, ListItemText, Tooltip, Backdrop, CircularProgress, InputLabel, OutlinedInput } from "@mui/material";
 import { useRef, useState } from "react";
 import axios from "axios";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../auth/Firebase";
 import Navbar from "../components/UI/Navbar";
 import { API_URL } from "../api/agent";
 import { Assessment, Info, Settings } from "@mui/icons-material";
-import { categoryList } from "../assets/misc/categoryList"
+import { categoryList } from "../assets/misc/categoryList";
+import { convertNameToId } from "../assets/misc/categoryList";
+import { toast } from "react-toastify";
+import { UploadFile } from "../assets/misc/fileUploader";
 
-export const PostForm = () => {
+export const PostForm = ({ history }) => {
   const title = useRef();
   const description = useRef();
   const preview = useRef();
-  const attachment = useRef();
-  const tags = useRef();
 
   const [attachmentFile, setAttachmentFile] = useState({
     type: null,
@@ -35,7 +34,7 @@ export const PostForm = () => {
   };
 
   const PreviewFile = () => {
-    let temp = "This type is not supported";
+    let temp = "This type of file is not supported";
     if (attachmentFile.type.includes("video")) {
       temp = (
         <video className="w-full h-full" controls>
@@ -49,50 +48,58 @@ export const PostForm = () => {
       temp = <img alt="" src={attachmentFile.link.toString()} className="w-full h-full" />;
       document.getElementById("placeholder").style.display = "none";
     }
+    document.getElementById("placeholder").style.display = "none";
     return temp;
   };
-
-  const UploadFile = async (file) => {
-    if (!file) return;
-    const storageRef = ref(storage, `/files/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on("state_changed", () => {
-      return getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-        const object = {
-          title: title.current.value,
-          description: description.current.value,
-          attachmentType: attachmentFile.type.includes("image") ? 2 : 1,
-          fileURL: url,
-          preview: preview.current.value,
-        };
-        console.log(object);
-        AddPost(object);
-      });
-    });
-  };
-
-  async function SubmitFormHandler(e) {
-    e.preventDefault();
-    UploadFile(attachmentFile.file);
-  }
-
-  async function AddPost(o) {
-    return axios
-      .post(API_URL + "/posts", o)
-      .then((response) => console.log(response));
-  }
 
   function PreviewAttachmentHandler(e) {
     const fileReader = new FileReader();
     fileReader.readAsDataURL(e.target.files[0]);
     fileReader.onload = function () {
-      setAttachmentFile({
-        type: e.target.files[0].type,
-        link: fileReader.result.toString(),
-        file: e.target.files[0],
-      });
+      if (!e.target.files[0].type.includes("image") && !e.target.files[0].type.includes("video")) {
+        toast.error("This type of file is not supported!");
+      }
+      else {
+        setAttachmentFile({
+          type: e.target.files[0].type,
+          link: fileReader.result.toString(),
+          file: e.target.files[0],
+        });
+      }
     };
+  }
+
+  async function SubmitFormHandler(e) {
+    try {
+      setLoading(true);
+      e.preventDefault();
+      const url = await UploadFile(attachmentFile.file);
+      const attachmentType = attachmentFile.type.includes("image") ? 2 : 1;
+      const payload = {
+        title: title.current.value,
+        description: description.current.value,
+        fileUrl: url,
+        attachmentType: attachmentType,
+        preview: preview.current.value,
+        status: 0,
+        tagMaps: convertNameToId(categories),
+      }
+      await AddPost(payload);
+      setLoading(false);
+      history.push("/");
+    }
+    catch {
+      toast.error("Error submitting your post, check all your fields and try again.")
+      setLoading(false);
+    }
+  }
+
+  async function AddPost(o) {
+    await axios
+      .post(API_URL + "/posts", o)
+      .then((response) => {
+        toast.success("Your post has been created!")
+      });
   }
 
   return (
@@ -109,30 +116,32 @@ export const PostForm = () => {
                 <Assessment fontSize="large" />
                 Post's data
               </Typography>
-              <div className="text-lg font-bold text-neutral-600">Title of your post</div>
-              <TextField size="small" fullWidth margin="dense" ref={title} placeholder="Preview of your post" variant="filled" />
-              <div className="text-lg font-bold text-neutral-600 mt-3">Description</div>
-              <TextField multiline ref={description} size="small" fullWidth margin="dense" placeholder="What is your post about?" rows={6} />
+              <TextField fullWidth inputRef={title} placeholder="An eye-catching title..." label="Title" margin="normal" />
+              <TextField multiline inputRef={description} fullWidth placeholder="What is your post about?" rows={8} label="Description" margin="normal" />
               <hr className="mt-4 mb-4" />
-              <div className="text-lg font-bold text-neutral-600 mb-2">
+              <div className="text-lg font-bold text-neutral-600 mb-2 flex items-center gap-1">
+                <Tooltip arrow placement="top" title="Media content for your post">
+                  <Info />
+                </Tooltip>
                 Choose attachment
               </div>
-              <input
-                multiple
-                ref={attachment}
-                accept="*/*"
-                type="file"
-                className="mb-4 block w-full text-sm text-slate-500
+              <div className="flex justify-between align-center">
+                <input
+                  required
+                  accept="image/*,video/*"
+                  type="file"
+                  className="mb-4 block w-full text-sm text-slate-500
                     file:mr-4 file:py-2 file:px-4
-                    file:rounded-full file:border-0
+                    file:rounded-md file:border-0
                     file:text-sm file:font-semibold
                     transition-all
                     duration-300
                     file:bg-pink-100 file:text-pink-400
                     hover:file:bg-pink-200
                     hover:drop-shadow-lg"
-                onChange={PreviewAttachmentHandler}
-              />
+                  onChange={PreviewAttachmentHandler}
+                />
+              </div>
               <div id="placeholder" className="border-dashed border w-full h-56 flex items-center justify-center text-neutral-600">
                 Preview your attachment here
               </div>
@@ -142,7 +151,6 @@ export const PostForm = () => {
                 </div>
               )}
             </Paper>
-
           </div>
           <div className="col-span-1">
             <Paper elevation={4} className="p-6 border">
@@ -150,23 +158,16 @@ export const PostForm = () => {
                 <Settings fontSize="large" />
                 Settings
               </Typography>
-              <div className="text-lg font-bold text-neutral-600 mt-3 flex items-center gap-1">
-                Preview
-                <Tooltip arrow placement="right" title="Preview content for users so they can get a hint about your post">
-                  <Info fontSize="small" />
-                </Tooltip>
-              </div>
-              <TextField multiline ref={description} size="small" fullWidth margin="dense" placeholder="Preview about your post" rows={3} />
-              <div className="text-lg font-bold text-neutral-600">Category</div>
-              <FormControl fullWidth>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="catSelectLabel">Category</InputLabel>
                 <Select
-                  id="demo-multiple-checkbox"
+                  labelId="catSelectLabel"
+                  id="catSelect"
                   multiple
                   value={categories}
                   onChange={handleCatChange}
                   renderValue={(selected) => selected.join(', ')}
-                  size="small"
-                  className="mt-2 mb-1"
+                  input={<OutlinedInput label="Category" />}
                 >
                   {categoryList.map((category) => (
                     <MenuItem key={category.id} value={category.name}>
@@ -176,7 +177,9 @@ export const PostForm = () => {
                   ))}
                 </Select>
               </FormControl>
-              <Button variant="contained" fullWidth type="submit" sx={{ mt: "16px;" }}>Create post</Button>
+              <TextField multiline inputRef={preview} fullWidth margin="normal" placeholder="Preview about your post" rows={3} label="Preview" helperText="Preview help people get to know your post!" />
+
+              <Button variant="contained" fullWidth type="submit" sx={{ mt: "16px;" }} >Create post</Button>
             </Paper>
           </div>
         </div>
