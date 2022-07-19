@@ -9,6 +9,7 @@ import ReportsTable from "../components/Tables/ReportsTable";
 import TagsTable from "../components/Tables/TagsTable";
 import Report from "../components/Report/Report";
 import UserForm from "../components/Forms/UserForm";
+import UserDetail from "../components/Details/UserDetail";
 
 const AdminPage = (props) => {
   return (
@@ -19,21 +20,27 @@ const AdminPage = (props) => {
         </Col>
         <Col>
           <Switch>
-            <Route path="/admin/users/form" component={UserForm}></Route>
-            <Route path="/admin/users" component={UsersTable}></Route>
-            <Route path="/admin/report" component={Report}></Route>
+            <Route exact path="/admin/users/form" component={UserForm}></Route>
+            <Route exact path="/admin/users" component={UsersTable}></Route>
             <Route
+              exact
               path="/admin/users/:id/details"
+              component={UserDetail}
+            ></Route>
+            <Route exact path="/admin/report" component={Report}></Route>
+            <Route
+              exact
+              path="/admin/users/:id/form"
               component={UsersTable}
             ></Route>
-            <Route path="/admin/users/:id/form" component={UsersTable}></Route>
             <Route
+              exact
               path="/admin/users/:id/delete"
               component={UsersTable}
             ></Route>
-            <Route path="/admin/posts" component={PostsTable}></Route>
-            <Route path="/admin/reports" component={ReportsTable}></Route>
-            <Route path="/admin/tags" component={TagsTable}></Route>
+            <Route exact path="/admin/posts" component={PostsTable}></Route>
+            <Route exact path="/admin/reports" component={ReportsTable}></Route>
+            <Route exact path="/admin/tags" component={TagsTable}></Route>
           </Switch>
         </Col>
       </Row>

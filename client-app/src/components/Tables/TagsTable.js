@@ -1,5 +1,5 @@
 import { Table, Container, Col, Row, Button, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import {
   Info,
@@ -12,17 +12,27 @@ import {
 
 import axios from "axios";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { API_URL } from "../../api/agent";
 
 const TagsTable = () => {
   const [tagsData, setTagsData] = useState(null);
 
+  const searchString = useRef();
+
+  const navigate = useHistory();
+
   const setAxiosDefaultHeader = () => {
     axios.defaults.headers = {
       Authorization: "Bearer " + localStorage.getItem("token"),
     };
+  };
+
+  const Delete = (id) => {
+    axios.delete(`${API_URL}/Tags/${id}`).then(() => {
+      navigate.push("/admin/tags");
+    });
   };
 
   const fetchData = () => {
@@ -48,7 +58,13 @@ const TagsTable = () => {
                 <Edit></Edit>
               </Link>
               {" | "}
-              <Link to={`/admin/tags/${data.TagID}/toggle`}>
+              <Link
+                to={`#`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  Delete(data.TagID);
+                }}
+              >
                 <VisibilityOff></VisibilityOff>
               </Link>
             </td>
@@ -64,7 +80,50 @@ const TagsTable = () => {
     fetchData();
   }, []);
 
-  const SubmitHandler = () => {};
+  const SubmitHandler = (e) => {
+    e.preventDefault();
+    return axios
+      .get(
+        `${API_URL}/tags?$filter=contains(TagName, '${searchString.current.value}')`
+      )
+      .then((response) => {
+        console.log(response);
+        const reports = response.data.value.map((data) => {
+          return (
+            <tr key={data.TagID}>
+              <td>{data.TagName}</td>
+              <td>
+                {data.Active ? (
+                  <Circle style={{ color: "green" }}></Circle>
+                ) : (
+                  <Circle style={{ color: "red" }}></Circle>
+                )}
+              </td>
+              <td>
+                <Link to={`/admin/tags/${data.TagID}/details`}>
+                  <Info />
+                </Link>
+                {" | "}
+                <Link to={`/admin/tags/${data.TagID}/edit`}>
+                  <Edit></Edit>
+                </Link>
+                {" | "}
+                <Link
+                  to={`#`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    Delete(data.TagID);
+                  }}
+                >
+                  <VisibilityOff></VisibilityOff>
+                </Link>
+              </td>
+            </tr>
+          );
+        });
+        setTagsData(reports);
+      });
+  };
 
   return (
     <Container>
@@ -85,6 +144,7 @@ const TagsTable = () => {
             <Row>
               <Col xs={8}>
                 <Form.Control
+                  ref={searchString}
                   type="text"
                   placeholder="Search post with name.."
                 ></Form.Control>

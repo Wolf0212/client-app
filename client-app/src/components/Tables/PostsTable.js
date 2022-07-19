@@ -16,7 +16,7 @@ import {
   Search,
 } from "@mui/icons-material";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import axios from "axios";
 
@@ -24,9 +24,46 @@ import { API_URL } from "../../api/agent";
 
 const PostsTable = () => {
   const [postsData, setPostsData] = useState(null);
+  const [pagination, setPagination] = useState(null);
+  const [url, setURL] = useState(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [numberRecords, setNumberRecords] = useState(3);
 
-  const SubmitHandler = (e) => {
+  const searchString = useRef();
+  const SubmitSearchHandler = (e) => {
     e.preventDefault();
+    fetchPagination(
+      `${API_URL}/Posts?$filter=contains(Title, '${searchString.current.value}')`
+    );
+    setURL(
+      `${API_URL}/Posts?$filter=contains(Title, '${searchString.current.value}')`
+    );
+    axios
+      .get(
+        `${API_URL}/Posts?$filter=contains(Title, '${searchString.current.value}')`
+      )
+      .then((response) => {
+        console.log(response);
+        const posts = response.data.map((data) => {
+          return (
+            <tr key={data.postID}>
+              <td>{data.title}</td>
+              <td>{data.description}</td>
+              <td>{data.uploadTime}</td>
+              <td>
+                <Link to={`/admin/posts/${data.postID}/details`}>
+                  <Info />
+                </Link>
+                {" | "}
+                <Link to={`/admin/posts/${data.postID}/toggle`}>
+                  <VisibilityOff></VisibilityOff>
+                </Link>
+              </td>
+            </tr>
+          );
+        });
+        setPostsData(posts);
+      });
   };
 
   const setAxiosDefaultHeader = () => {
@@ -36,37 +73,77 @@ const PostsTable = () => {
   };
 
   const fetchData = () => {
-    return axios.get(`${API_URL}/Posts`).then((response) => {
-      const posts = response.data.map((data) => {
-        return (
-          <tr key={data.postID}>
-            <td>{data.title}</td>
-            <td>{data.description}</td>
-            <td>{data.uploadTime}</td>
-            <td>
-              <Link to={`/admin/posts/${data.postID}/details`}>
-                <Info />
-              </Link>
-              {" | "}
-              <Link to={`/admin/posts/${data.postID}/edit`}>
-                <Edit></Edit>
-              </Link>
-              {" | "}
-              <Link to={`/admin/posts/${data.postID}/toggle`}>
-                <VisibilityOff></VisibilityOff>
-              </Link>
-            </td>
-          </tr>
-        );
+    fetchPagination(
+      `${API_URL}/Posts?$skip=${
+        pageIndex * numberRecords
+      }&$top=${numberRecords}`
+    );
+    setURL(
+      `${API_URL}/Posts?$skip=${
+        pageIndex * numberRecords
+      }&$top=${numberRecords}`
+    );
+    return axios
+      .get(
+        `${API_URL}/Posts?$skip=${
+          pageIndex * numberRecords
+        }&$top=${numberRecords}`
+      )
+      .then((response) => {
+        const posts = response.data.map((data) => {
+          return (
+            <tr key={data.postID}>
+              <td>{data.title}</td>
+              <td>{data.description}</td>
+              <td>{data.uploadTime}</td>
+              <td>
+                <Link to={`/admin/posts/${data.postID}/details`}>
+                  <Info />
+                </Link>
+                {" | "}
+                <Link to={`/admin/posts/${data.postID}/toggle`}>
+                  <VisibilityOff></VisibilityOff>
+                </Link>
+              </td>
+            </tr>
+          );
+        });
+        setPostsData(posts);
       });
-      setPostsData(posts);
+  };
+
+  const fetchPagination = (link) => {
+    console.log(link);
+    return axios.get(link).then((response) => {
+      console.log(response);
+      const totalRecord = response.data.length;
+      let pageNumber = totalRecord / numberRecords;
+      if (totalRecord % numberRecords !== 0) {
+        pageNumber++;
+      }
+      let paginationItems = [];
+      for (let i = 0; i < pageNumber - 1; i++) {
+        paginationItems.push(
+          <Pagination.Item
+            key={i}
+            onClick={() => {
+              setPageIndex(i);
+            }}
+            active={i === pageIndex}
+          >
+            {i + 1}
+          </Pagination.Item>
+        );
+      }
+      setPagination(paginationItems);
     });
   };
 
   useEffect(() => {
     setAxiosDefaultHeader();
     fetchData();
-  }, []);
+    fetchPagination(url);
+  }, [pageIndex]);
 
   return (
     <Container>
@@ -77,16 +154,13 @@ const PostsTable = () => {
         Post Management
       </h1>
       <Row className="justify-content-between mb-3">
-        <Col xs={2}>
-          <Button as={Link} to="/admin/posts/create" variant="primary">
-            +Add new
-          </Button>
-        </Col>
+        <Col xs={2}></Col>
         <Col xs={4}>
-          <Form onSubmit={SubmitHandler}>
+          <Form onSubmit={SubmitSearchHandler}>
             <Row>
               <Col xs={8}>
                 <Form.Control
+                  ref={searchString}
                   type="text"
                   placeholder="Search post with name.."
                 ></Form.Control>
@@ -111,13 +185,7 @@ const PostsTable = () => {
         </thead>
         <tbody>{postsData && postsData}</tbody>
       </Table>
-      <Pagination>
-        <Pagination.Prev />
-        <Pagination.Item>{1}</Pagination.Item>
-        <Pagination.Item>{2}</Pagination.Item>
-        <Pagination.Item>{3}</Pagination.Item>
-        <Pagination.Next />
-      </Pagination>
+      <Pagination>{pagination && pagination}</Pagination>
     </Container>
   );
 };

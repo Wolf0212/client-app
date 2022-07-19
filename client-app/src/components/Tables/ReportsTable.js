@@ -11,12 +11,14 @@ import {
 
 import axios from "axios";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { API_URL } from "../../api/agent";
 
 const ReportsTable = () => {
   const [reportsData, setReportsData] = useState();
+
+  const searchString = useRef();
 
   const setAxiosDefaultHeader = () => {
     axios.defaults.headers = {
@@ -59,7 +61,40 @@ const ReportsTable = () => {
     fetchData();
   }, []);
 
-  const SubmitHandler = () => {};
+  const SubmitHandler = (e) => {
+    e.preventDefault();
+    return axios
+      .get(
+        `${API_URL}/reports?$filter=contains(Username, '${searchString.current.value}')`
+      )
+      .then((response) => {
+        console.log(response);
+        const reports = response.data.value.map((data) => {
+          return (
+            <tr key={data.Username}>
+              <td>{data.Email}</td>
+              <td>{data.Username}</td>
+              <td>{data.FirstName}</td>
+              <td>{data.LastName}</td>
+              <td>
+                <Link to={`/admin/users/${data.UserID}/details`}>
+                  <Info />
+                </Link>
+                {" | "}
+                <Link to={`/admin/users/${data.UserID}/edit`}>
+                  <Edit></Edit>
+                </Link>
+                {" | "}
+                <Link to={`/admin/users/${data.UserID}/toggle`}>
+                  <VisibilityOff></VisibilityOff>
+                </Link>
+              </td>
+            </tr>
+          );
+        });
+        setReportsData(reports);
+      });
+  };
 
   return (
     <Container>
@@ -80,6 +115,7 @@ const ReportsTable = () => {
             <Row>
               <Col xs={8}>
                 <Form.Control
+                  ref={searchString}
                   type="text"
                   placeholder="Search post with name.."
                 ></Form.Control>
