@@ -1,32 +1,54 @@
-import { Box, AppBar, Toolbar, IconButton, Menu, MenuItem, Button, TextField, InputAdornment, Avatar, ListItemIcon, Divider } from "@mui/material";
+import { Box, AppBar, Toolbar, IconButton, Menu, MenuItem, Button, Avatar, ListItemIcon, Divider, InputBase } from "@mui/material";
 
 import { useState } from "react";
 import logo from ".././../assets/images/Logo.png";
 import { Container } from "@mui/system";
-import { AccountCircle, AddBox, AddCircle, Lock, Logout, Search, Settings } from "@mui/icons-material";
+import { AccountCircle, AddBox, AddCircle, Lock, Logout, Search } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { withRouter } from "react-router-dom";
 import { pink } from "@mui/material/colors";
+import { styled, alpha } from '@mui/material/styles';
 
-// function TabPanel(props) {
+const SearchBar = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 1),
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
 
+  flexGrow: '1',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    maxWidth: '50%',
+  },
+}));
 
-//   return (
-//     <div
-//       role="tabpanel"
-//       hidden={value !== index}
-//       id={`simple-tabpanel-${index}`}
-//       aria-labelledby={`simple-tab-${index}`}
-//       {...other}
-//     >
-//       {value === index && (
-//         <Box sx={{ p: 3 }}>
-//           <Typography>{children}</Typography>
-//         </Box>
-//       )}
-//     </div>
-//   );
-// }
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  width: '100%',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    borderRadius: theme.shape.borderRadius,
+    border: "1px solid #fbcfe8",
+    width: '100%',
+    '&:hover': {
+      boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"
+    },
+  },
+}));
 
 function Navbar({ history }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -42,7 +64,7 @@ function Navbar({ history }) {
     if (setting === 'Profile') {
       history.push('/profile')
     } else if (setting === 'Change password') {
-      alert('Open modal');
+      toast('Open modal');
     }
     else if (setting === 'Logout') {
       localStorage.clear();
@@ -61,10 +83,15 @@ function Navbar({ history }) {
           <IconButton href="/post-form/create" sx={{ display: { xs: 'flex', sm: 'none' } }}><AddCircle fontSize="large" className="text-pink-300" /></IconButton>
           <Button href="/post-form/create" sx={{ display: { xs: 'none', sm: 'flex', backgroundColor: pink[200] } }} variant="contained" startIcon={<AddBox />}>New post</Button>
           <div className="grow flex sm:flex justify-center ">
-            <TextField size="small" className="grow max-w-sm bg-slate-100" variant="outlined" placeholder="Search anything here!" type="search"
-              InputProps={{
-                endAdornment: <InputAdornment position="end"><Search /></InputAdornment>
-              }} />
+            <SearchBar>
+              <SearchIconWrapper>
+                <Search />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ 'aria-label': 'search' }}
+              />
+            </SearchBar>
           </div>
           {localStorage.token ? <Box className="flex gap-4 min-h">
             <div onClick={handleClick} className="cursor-pointer">
@@ -107,23 +134,17 @@ function Navbar({ history }) {
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-              <MenuItem className="flex justify-between">
+              <MenuItem onClick={() => handleUserClick('Profile')}>
                 <ListItemIcon >
                   <AccountCircle />
                 </ListItemIcon> Profile
               </MenuItem>
-              <MenuItem>
+              <MenuItem onClick={() => handleUserClick('Change Password')}>
                 <ListItemIcon>
                   <Lock />
                 </ListItemIcon> Change password
               </MenuItem>
               <Divider />
-              <MenuItem>
-                <ListItemIcon>
-                  <Settings />
-                </ListItemIcon>
-                Settings
-              </MenuItem>
               <MenuItem onClick={() => handleUserClick('Logout')}>
                 <ListItemIcon>
                   <Logout />
@@ -150,7 +171,7 @@ export default withRouter(Navbar);
 
 
 
-{/* <Box>
+/* <Box>
         <div className={styles.navbar}>
           <div className={styles.logo}>OnlyFans</div>
           <div style={{ marginRight: 1.2 + "rem" }}>
@@ -159,14 +180,15 @@ export default withRouter(Navbar);
               <Tab label="Page Two" href="#" />
               <Tab label="Page Three" href="#" />
             </Tabs>
-          </div>
+          </div>+
+          
         </div>
       </Box> */ /* <TabPanel value={value} index={0}>
-        <PostForm></PostForm>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <ChangePasswordForm></ChangePasswordForm>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <UserForm></UserForm>
-      </TabPanel> */}
+<PostForm></PostForm>
+</TabPanel>
+<TabPanel value={value} index={1}>
+<ChangePasswordForm></ChangePasswordForm>
+</TabPanel>
+<TabPanel value={value} index={2}>
+<UserForm></UserForm>
+</TabPanel> */

@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import React from "react";
 import { PostDetail } from "./pages/PostDetail.js";
 import { PostForm } from "./pages/PostForm.js";
+import { Profile } from "./pages/Profile.js";
 
 export const history = createBrowserHistory();
 
@@ -22,6 +23,7 @@ function App() {
             path={["/post-form/create", "/post-form/edit/:id"]}
             component={PostForm}
           />
+          <Route path={"/profile"} component={Profile} />
           <Route path={"/post-detail"} component={PostDetail} />
           <Route path={"/login"} component={Login} />
           <Route path={"/admin"} component={AdminPage} />
