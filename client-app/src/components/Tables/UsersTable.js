@@ -11,18 +11,53 @@ import {
 
 import axios from "axios";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import { API_URL } from "../../api/agent";
 
 const UsersTable = () => {
+  const [usersData, setUsersData] = useState(null);
+
   const setAxiosDefaultHeader = () => {
     axios.defaults.headers = {
       Authorization: "Bearer " + localStorage.getItem("token"),
     };
   };
 
+  const fetchData = () => {
+    return axios.get(`${API_URL}/Users`).then((response) => {
+      console.log(response);
+      const users = response.data.value.map((data) => {
+        return (
+          <tr key={data.Username}>
+            <td>{data.Email}</td>
+            <td>{data.Username}</td>
+            <td>{data.FirstName}</td>
+            <td>{data.LastName}</td>
+            <td>
+              <Link to={`/admin/users/${data.UserID}/details`}>
+                <Info />
+              </Link>
+              {" | "}
+              <Link to={`/admin/users/${data.UserID}/edit`}>
+                <Edit></Edit>
+              </Link>
+              {" | "}
+              <Link to={`/admin/users/${data.UserID}/toggle`}>
+                <VisibilityOff></VisibilityOff>
+              </Link>
+            </td>
+          </tr>
+        );
+      });
+      setUsersData(users);
+    });
+  };
+
   useEffect(() => {
     setAxiosDefaultHeader();
-  });
+    fetchData();
+  }, []);
 
   const SubmitHandler = () => {};
 
@@ -68,27 +103,7 @@ const UsersTable = () => {
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>phamsn2001@gmail.com</td>
-            <td>PhamSon</td>
-            <td>TranPham</td>
-            <td>KimSon</td>
-            <td>
-              <Link to={`/admin/users/${1}/details`}>
-                <Info />
-              </Link>
-              {" | "}
-              <Link to={`/admin/users/${1}/edit`}>
-                <Edit></Edit>
-              </Link>
-              {" | "}
-              <Link to={`/admin/users/${1}/toggle`}>
-                <VisibilityOff></VisibilityOff>
-              </Link>
-            </td>
-          </tr>
-        </tbody>
+        <tbody>{usersData && usersData}</tbody>
       </Table>
     </Container>
   );

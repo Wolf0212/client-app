@@ -16,11 +16,15 @@ import {
   Search,
 } from "@mui/icons-material";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import axios from "axios";
 
+import { API_URL } from "../../api/agent";
+
 const PostsTable = () => {
+  const [postsData, setPostsData] = useState(null);
+
   const SubmitHandler = (e) => {
     e.preventDefault();
   };
@@ -31,9 +35,38 @@ const PostsTable = () => {
     };
   };
 
+  const fetchData = () => {
+    return axios.get(`${API_URL}/Posts`).then((response) => {
+      const posts = response.data.map((data) => {
+        return (
+          <tr key={data.postID}>
+            <td>{data.title}</td>
+            <td>{data.description}</td>
+            <td>{data.uploadTime}</td>
+            <td>
+              <Link to={`/admin/posts/${data.postID}/details`}>
+                <Info />
+              </Link>
+              {" | "}
+              <Link to={`/admin/posts/${data.postID}/edit`}>
+                <Edit></Edit>
+              </Link>
+              {" | "}
+              <Link to={`/admin/posts/${data.postID}/toggle`}>
+                <VisibilityOff></VisibilityOff>
+              </Link>
+            </td>
+          </tr>
+        );
+      });
+      setPostsData(posts);
+    });
+  };
+
   useEffect(() => {
     setAxiosDefaultHeader();
-  });
+    fetchData();
+  }, []);
 
   return (
     <Container>
@@ -70,34 +103,13 @@ const PostsTable = () => {
       <Table>
         <thead>
           <tr>
-            <th>Email</th>
-            <th>Username</th>
-            <th>Firstname</th>
-            <th>Lastname</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Post time</th>
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>phamsn2001@gmail.com</td>
-            <td>PhamSon</td>
-            <td>TranPham</td>
-            <td>KimSon</td>
-            <td>
-              <Link to="/admin/posts/details">
-                <Info />
-              </Link>
-              {" | "}
-              <Link to="/admin/posts/edit">
-                <Edit></Edit>
-              </Link>
-              {" | "}
-              <Link to="/admin/posts/toggle">
-                <VisibilityOff></VisibilityOff>
-              </Link>
-            </td>
-          </tr>
-        </tbody>
+        <tbody>{postsData && postsData}</tbody>
       </Table>
       <Pagination>
         <Pagination.Prev />

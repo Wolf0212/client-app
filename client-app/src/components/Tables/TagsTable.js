@@ -7,22 +7,62 @@ import {
   VisibilityOff,
   Visibility,
   Search,
+  Circle,
 } from "@mui/icons-material";
 
 import axios from "axios";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import { API_URL } from "../../api/agent";
 
 const TagsTable = () => {
+  const [tagsData, setTagsData] = useState(null);
+
   const setAxiosDefaultHeader = () => {
     axios.defaults.headers = {
       Authorization: "Bearer " + localStorage.getItem("token"),
     };
   };
 
+  const fetchData = () => {
+    return axios.get(`${API_URL}/Tags`).then((response) => {
+      console.log(response);
+      const reports = response.data.value.map((data) => {
+        return (
+          <tr key={data.TagID}>
+            <td>{data.TagName}</td>
+            <td>
+              {data.Active ? (
+                <Circle style={{ color: "green" }}></Circle>
+              ) : (
+                <Circle style={{ color: "red" }}></Circle>
+              )}
+            </td>
+            <td>
+              <Link to={`/admin/tags/${data.TagID}/details`}>
+                <Info />
+              </Link>
+              {" | "}
+              <Link to={`/admin/tags/${data.TagID}/edit`}>
+                <Edit></Edit>
+              </Link>
+              {" | "}
+              <Link to={`/admin/tags/${data.TagID}/toggle`}>
+                <VisibilityOff></VisibilityOff>
+              </Link>
+            </td>
+          </tr>
+        );
+      });
+      setTagsData(reports);
+    });
+  };
+
   useEffect(() => {
     setAxiosDefaultHeader();
-  });
+    fetchData();
+  }, []);
 
   const SubmitHandler = () => {};
 
@@ -61,34 +101,12 @@ const TagsTable = () => {
       <Table>
         <thead>
           <tr>
-            <th>Email</th>
-            <th>Username</th>
-            <th>Firstname</th>
-            <th>Lastname</th>
+            <th>Tag name</th>
+            <th>Status</th>
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>phamsn2001@gmail.com</td>
-            <td>PhamSon</td>
-            <td>TranPham</td>
-            <td>KimSon</td>
-            <td>
-              <Link to="/admin/posts/details">
-                <Info />
-              </Link>
-              {" | "}
-              <Link to="/admin/posts/edit">
-                <Edit></Edit>
-              </Link>
-              {" | "}
-              <Link to="/admin/posts/toggle">
-                <VisibilityOff></VisibilityOff>
-              </Link>
-            </td>
-          </tr>
-        </tbody>
+        <tbody>{tagsData && tagsData}</tbody>
       </Table>
     </Container>
   );

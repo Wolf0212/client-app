@@ -11,18 +11,53 @@ import {
 
 import axios from "axios";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import { API_URL } from "../../api/agent";
 
 const ReportsTable = () => {
+  const [reportsData, setReportsData] = useState();
+
   const setAxiosDefaultHeader = () => {
     axios.defaults.headers = {
       Authorization: "Bearer " + localStorage.getItem("token"),
     };
   };
 
+  const fetchData = () => {
+    return axios.get(`${API_URL}/Reports`).then((response) => {
+      console.log(response);
+      const reports = response.data.value.map((data) => {
+        return (
+          <tr key={data.Username}>
+            <td>{data.Email}</td>
+            <td>{data.Username}</td>
+            <td>{data.FirstName}</td>
+            <td>{data.LastName}</td>
+            <td>
+              <Link to={`/admin/users/${data.UserID}/details`}>
+                <Info />
+              </Link>
+              {" | "}
+              <Link to={`/admin/users/${data.UserID}/edit`}>
+                <Edit></Edit>
+              </Link>
+              {" | "}
+              <Link to={`/admin/users/${data.UserID}/toggle`}>
+                <VisibilityOff></VisibilityOff>
+              </Link>
+            </td>
+          </tr>
+        );
+      });
+      setReportsData(reports);
+    });
+  };
+
   useEffect(() => {
     setAxiosDefaultHeader();
-  });
+    fetchData();
+  }, []);
 
   const SubmitHandler = () => {};
 
@@ -68,27 +103,7 @@ const ReportsTable = () => {
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>phamsn2001@gmail.com</td>
-            <td>PhamSon</td>
-            <td>TranPham</td>
-            <td>KimSon</td>
-            <td>
-              <Link to="/admin/posts/details">
-                <Info />
-              </Link>
-              {" | "}
-              <Link to="/admin/posts/edit">
-                <Edit></Edit>
-              </Link>
-              {" | "}
-              <Link to="/admin/posts/toggle">
-                <VisibilityOff></VisibilityOff>
-              </Link>
-            </td>
-          </tr>
-        </tbody>
+        <tbody>{reportsData && reportsData}</tbody>
       </Table>
     </Container>
   );
