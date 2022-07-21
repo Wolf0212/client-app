@@ -14,6 +14,7 @@ import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 
 import { API_URL } from "../../api/agent";
+import { toast } from "react-toastify";
 
 const ReportsTable = () => {
   const [reportsData, setReportsData] = useState();
@@ -26,26 +27,49 @@ const ReportsTable = () => {
     };
   };
 
+  const SetStatus = (id, status) => {
+    axios.patch(`${API_URL}/Reports/${id}`, { Status: status }).then(() => {
+      toast.success("OKe");
+    });
+  };
+
   const fetchData = () => {
     return axios.get(`${API_URL}/Reports`).then((response) => {
       console.log(response);
       const reports = response.data.value.map((data) => {
         return (
-          <tr key={data.Username}>
-            <td>{data.Email}</td>
-            <td>{data.Username}</td>
-            <td>{data.FirstName}</td>
-            <td>{data.LastName}</td>
+          <tr key={data.ReportID}>
+            <td>{data.Description}</td>
+            <td>{data.ReportTime}</td>
+            <td>{data.ReportType}</td>
             <td>
-              <Link to={`/admin/users/${data.UserID}/details`}>
+              <Link
+                to={`#`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  SetStatus(data.ReportID, "Unresolved");
+                }}
+              >
                 <Info />
               </Link>
               {" | "}
-              <Link to={`/admin/users/${data.UserID}/edit`}>
+              <Link
+                to={`#`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  SetStatus(data.ReportID, "Resolved");
+                }}
+              >
                 <Edit></Edit>
               </Link>
               {" | "}
-              <Link to={`/admin/users/${data.UserID}/toggle`}>
+              <Link
+                to={`#`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  SetStatus(data.ReportID, "Rejected");
+                }}
+              >
                 <VisibilityOff></VisibilityOff>
               </Link>
             </td>
@@ -65,27 +89,44 @@ const ReportsTable = () => {
     e.preventDefault();
     return axios
       .get(
-        `${API_URL}/reports?$filter=contains(Username, '${searchString.current.value}')`
+        `${API_URL}/reports?$filter=contains(Description, '${searchString.current.value}')`
       )
       .then((response) => {
         console.log(response);
         const reports = response.data.value.map((data) => {
           return (
-            <tr key={data.Username}>
-              <td>{data.Email}</td>
-              <td>{data.Username}</td>
-              <td>{data.FirstName}</td>
-              <td>{data.LastName}</td>
+            <tr key={data.ReportID}>
+              <td>{data.Description}</td>
+              <td>{data.ReportTime}</td>
+              <td>{data.ReportType}</td>
               <td>
-                <Link to={`/admin/users/${data.UserID}/details`}>
+                <Link
+                  to={`#`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    SetStatus(data.ReportID, "Unresolved");
+                  }}
+                >
                   <Info />
                 </Link>
                 {" | "}
-                <Link to={`/admin/users/${data.UserID}/edit`}>
+                <Link
+                  to={`#`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    SetStatus(data.ReportID, "Resolved");
+                  }}
+                >
                   <Edit></Edit>
                 </Link>
                 {" | "}
-                <Link to={`/admin/users/${data.UserID}/toggle`}>
+                <Link
+                  to={`#`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    SetStatus(data.ReportID, "Rejected");
+                  }}
+                >
                   <VisibilityOff></VisibilityOff>
                 </Link>
               </td>
@@ -105,11 +146,7 @@ const ReportsTable = () => {
         Reports Management
       </h1>
       <Row className="justify-content-between mb-3">
-        <Col xs={2}>
-          <Button as={Link} to="/admin/posts/create" variant="primary">
-            +Add new
-          </Button>
-        </Col>
+        <Col xs={2}></Col>
         <Col xs={4}>
           <Form onSubmit={SubmitHandler}>
             <Row>
@@ -132,10 +169,9 @@ const ReportsTable = () => {
       <Table>
         <thead>
           <tr>
-            <th>Email</th>
-            <th>Username</th>
-            <th>Firstname</th>
-            <th>Lastname</th>
+            <th>Description</th>
+            <th>Time</th>
+            <th>Type</th>
             <th></th>
           </tr>
         </thead>

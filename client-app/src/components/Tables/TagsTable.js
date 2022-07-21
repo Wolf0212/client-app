@@ -31,8 +31,16 @@ const TagsTable = () => {
 
   const Delete = (id) => {
     axios.delete(`${API_URL}/Tags/${id}`).then(() => {
-      navigate.push("/admin/tags");
+      window.location.reload();
     });
+  };
+
+  const EditUnvisual = (id) => {
+    var tagName = document.getElementById("tagName" + id);
+    var form = document.getElementById("form" + id);
+
+    form.hidden = true;
+    tagName.hidden = false;
   };
 
   const fetchData = () => {
@@ -41,7 +49,35 @@ const TagsTable = () => {
       const reports = response.data.value.map((data) => {
         return (
           <tr key={data.TagID}>
-            <td>{data.TagName}</td>
+            <td>
+              <span id={`tagName${data.TagID}`}>{data.TagName}</span>
+              <Form
+                hidden
+                id={`form${data.TagID}`}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  ChangeNameHandler(data.TagID);
+                }}
+              >
+                <Row>
+                  <Col md={6}>
+                    <Form.Control
+                      id={`input${data.TagID}`}
+                      type="text"
+                      placeholder="Enter Tag name"
+                    ></Form.Control>
+                  </Col>
+                  <Col>
+                    <Button type="submit" as="button">
+                      Save
+                    </Button>{" "}
+                    <Button type="button" onClick={EditUnvisual}>
+                      Cancel
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </td>
             <td>
               {data.Active ? (
                 <Circle style={{ color: "green" }}></Circle>
@@ -54,7 +90,13 @@ const TagsTable = () => {
                 <Info />
               </Link>
               {" | "}
-              <Link to={`/admin/tags/${data.TagID}/edit`}>
+              <Link
+                to={`#`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  EditVisual(data.TagID);
+                }}
+              >
                 <Edit></Edit>
               </Link>
               {" | "}
@@ -80,6 +122,23 @@ const TagsTable = () => {
     fetchData();
   }, []);
 
+  const EditVisual = (id) => {
+    var tagName = document.getElementById("tagName" + id);
+    var form = document.getElementById("form" + id);
+
+    tagName.hidden = true;
+    form.hidden = false;
+  };
+
+  const ChangeNameHandler = (id) => {
+    var input = document.getElementById("input" + id);
+    axios
+      .patch(`${API_URL}/Tags/${id}`, { tagName: `${input.value}` })
+      .then(() => {
+        window.location.reload();
+      });
+  };
+
   const SubmitHandler = (e) => {
     e.preventDefault();
     return axios
@@ -91,7 +150,33 @@ const TagsTable = () => {
         const reports = response.data.value.map((data) => {
           return (
             <tr key={data.TagID}>
-              <td>{data.TagName}</td>
+              <td>
+                <span id={`tagName${data.TagID}`}>{data.TagName}</span>
+                <Form
+                  hidden
+                  id={`form${data.TagID}`}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    ChangeNameHandler(data.TagID);
+                  }}
+                >
+                  <Row>
+                    <Col md={6}>
+                      <Form.Control
+                        id={`input${data.TagID}`}
+                        type="text"
+                        placeholder="Enter Tag name"
+                      ></Form.Control>
+                    </Col>
+                    <Col>
+                      <Button type="submit">Save</Button>{" "}
+                      <Button type="button" onClick={EditUnvisual}>
+                        Cancel
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              </td>
               <td>
                 {data.Active ? (
                   <Circle style={{ color: "green" }}></Circle>
@@ -104,7 +189,13 @@ const TagsTable = () => {
                   <Info />
                 </Link>
                 {" | "}
-                <Link to={`/admin/tags/${data.TagID}/edit`}>
+                <Link
+                  to={`#`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    EditVisual(data.TagID);
+                  }}
+                >
                   <Edit></Edit>
                 </Link>
                 {" | "}
@@ -125,6 +216,22 @@ const TagsTable = () => {
       });
   };
 
+  const ShowForm = () => {
+    const button = document.getElementById("addbutton");
+    const form = document.getElementById("addform");
+
+    button.hidden = true;
+    form.hidden = false;
+  };
+
+  const HideForm = () => {
+    const button = document.getElementById("addbutton");
+    const form = document.getElementById("addform");
+
+    form.hidden = true;
+    button.hidden = false;
+  };
+
   return (
     <Container>
       <h1
@@ -134,10 +241,37 @@ const TagsTable = () => {
         Tags Management
       </h1>
       <Row className="justify-content-between mb-3">
-        <Col xs={2}>
-          <Button as={Link} to="/admin/posts/create" variant="primary">
+        <Col xs={4}>
+          <Button
+            id="addbutton"
+            onClick={(e) => {
+              e.preventDefault();
+              ShowForm();
+            }}
+            as={Link}
+            to="#"
+            variant="primary"
+          >
             +Add new
           </Button>
+          <Form hidden id="addform">
+            <Row>
+              <Form.Control as={Col} placeholder="Add new tag"></Form.Control>
+              <Col>
+                <Button>Add</Button>{" "}
+                <Button
+                  as={Link}
+                  to="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    HideForm();
+                  }}
+                >
+                  Cancel
+                </Button>
+              </Col>
+            </Row>
+          </Form>
         </Col>
         <Col xs={4}>
           <Form onSubmit={SubmitHandler}>

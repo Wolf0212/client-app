@@ -10,6 +10,7 @@ import React from "react";
 import { PostDetail } from "./pages/PostDetail.js";
 import { PostForm } from "./pages/PostForm.js";
 import { Profile } from "./pages/Profile.js";
+import { ProfileTab } from "./components/ProfileTab";
 
 export const history = createBrowserHistory();
 
@@ -24,6 +25,7 @@ function App() {
             component={PostForm}
           />
           <Route path={"/profile"} component={Profile} />
+          <Route path={"/profiletab"} component={ProfileTab} />
           <Route path={"/post-detail"} component={PostDetail} />
           <Route path={"/login"} component={Login} />
           <Route path={"/admin"} component={AdminPage} />
