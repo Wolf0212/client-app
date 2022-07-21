@@ -8,6 +8,7 @@ import { categoryList } from "../assets/misc/categoryList";
 import { convertNameToId } from "../assets/misc/categoryList";
 import { toast } from "react-toastify";
 import { UploadFile } from "../assets/misc/fileUploader";
+import { DateTime } from "luxon";
 
 export const PostForm = ({ history }) => {
   const title = useRef();
@@ -83,6 +84,7 @@ export const PostForm = ({ history }) => {
         preview: preview.current.value,
         status: 0,
         tagMaps: convertNameToId(categories),
+        UploadTime: DateTime.now().toISO(),
       }
       await AddPost(payload);
       setLoading(false);
@@ -106,7 +108,7 @@ export const PostForm = ({ history }) => {
     <div>
       <Navbar></Navbar>
       <form onSubmit={SubmitFormHandler} className="w-full md:w-11/12 lg:w-10/12 mx-auto lg:p-10 md:p-5 sm:p-2">
-        <Backdrop open={loading} sx={{ zIndex: "9999" }}>
+        <Backdrop open={loading} sx={{ zIndex: "9999", color: "#d1d1d1" }}>
           <CircularProgress color="inherit" />
         </Backdrop>
         <div className="grid grid-cols-3 gap-4">
