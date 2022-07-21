@@ -24,7 +24,7 @@ export const postModel = {
     effects: (dispatch) => ({
         //payload: post's id
         async getPostById(payload, rootState) {
-            await axios.get(`${API_URL}/posts/${payload}?$expand=Uploader`).then((response) => {
+            await axios.get(`${API_URL}/posts/${payload}`).then((response) => {
                 dispatch.postModel.setPost(response.data);
                 console.log(postModel.state.post);
             }, () => toast.error("Failed to fetch data!"));

@@ -1,7 +1,7 @@
 import { Backdrop, CircularProgress, Grid } from "@mui/material";
 import Navbar from "../components/UI/Navbar";
 import { PostItem } from "../components/PostItem";
-import { SelectionBar } from "../components/SelectionBar";
+import SelectionBar from "../components/SelectionBar";
 import { connect } from 'react-redux'
 import { useEffect, useState } from "react";
 

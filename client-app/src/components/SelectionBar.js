@@ -2,8 +2,9 @@ import React from 'react'
 import { Checkbox, FormControl, ListItemText, MenuItem, Select } from "@mui/material";
 import { useState } from "react";
 import { categoryList } from "../assets/misc/categoryList";
+import { connect } from 'react-redux';
 
-export const SelectionBar = () => {
+const SelectionBar = ({ getPostList, postList }) => {
     const [sort, setSort] = useState("Newest");
     const [categories, setCategories] = useState([]);
 
@@ -14,6 +15,7 @@ export const SelectionBar = () => {
         setCategories(
             typeof value === 'string' ? value.split(',') : value,
         );
+        getPostList("");
     };
 
     const handleChange = (event) => {
@@ -45,7 +47,7 @@ export const SelectionBar = () => {
                     size="small"
                 >
                     {categoryList.map((category) => (
-                        <MenuItem key={category.id} value={category.id}>
+                        <MenuItem key={category.id} value={category.name}>
                             <Checkbox checked={categories.indexOf(category.name) > -1} />
                             <ListItemText primary={category.name} />
                         </MenuItem>
@@ -55,3 +57,13 @@ export const SelectionBar = () => {
         </div>
     )
 }
+
+const mapStateToProps = (dispatch) => ({
+    postList: dispatch.postModel.postList,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    getPostList: dispatch.postModel.getPostList,
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectionBar)
