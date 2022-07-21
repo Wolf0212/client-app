@@ -38,13 +38,13 @@ export const ProfileTab = () => {
   const UpdateProfile = (e) => {
     e.preventDefault();
     if (CheckConfirmPassword) {
+      const payload = {
+        firstName: firstNameInput.current.value,
+        lastName: lastNameInput.current.value,
+        username: usernameInput.current.value,
+      }
       axios
-        .patch(`${API_URL}/users/${id}`, {
-          firstName: firstNameInput.current.value,
-          lastName: lastNameInput.current.value,
-          username: usernameInput.current.value,
-          password: passwordInput.current.value,
-        })
+        .patch(`${API_URL}/users/${id}`, payload)
         .then(() => {
           toast.success("Update success");
           window.location.reload();
@@ -56,7 +56,6 @@ export const ProfileTab = () => {
 
   const FetchData = () => {
     axios.get(`${API_URL}/Users/${id}`).then((response) => {
-      console.log(response);
       const userInfo = (
         <Container
           className="mt-1 p-5"
@@ -111,31 +110,14 @@ export const ProfileTab = () => {
                       defaultValue={response.data.Username}
                     ></Form.Control>
                   </Form.Group>
-                  <Form.Group as={Col}>
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      ref={passwordInput}
-                      type="password"
-                      defaultValue={response.data.Password}
-                    ></Form.Control>
-                  </Form.Group>
                 </Row>
                 <Row className="mb-3">
                   <Col>
                     <Form.Control
                       hidden
                       ref={avatarUrlInput}
-                      defaultValue={response.data.AvatarUrl}
                     ></Form.Control>
                   </Col>
-                  <Form.Group as={Col}>
-                    <Form.Label>Confirm Password</Form.Label>
-                    <Form.Control
-                      ref={confirmPasswordInput}
-                      type="password"
-                      defaultValue={response.data.Password}
-                    ></Form.Control>
-                  </Form.Group>
                 </Row>
                 <Button className="text-blue-800" type="submit">
                   Save Profile

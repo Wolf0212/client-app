@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import React from "react";
 import PostDetail from "./pages/PostDetail.js";
 import { PostForm } from "./pages/PostForm.js";
-import { Profile } from "./pages/Profile.js";
+import Profile from "./pages/Profile.js";
 import { ProfileTab } from "./components/ProfileTab";
 
 export const history = createBrowserHistory();

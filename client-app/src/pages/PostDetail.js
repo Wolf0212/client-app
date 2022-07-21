@@ -1,21 +1,34 @@
-import { async } from '@firebase/util'
-import { Add, ArrowBackIosNew, BookmarkAddOutlined, ChatBubble, ChatBubbleOutline, CloudDownloadOutlined, DiamondOutlined, Favorite, FavoriteBorder, ReportOutlined } from '@mui/icons-material'
+import { Add, ArrowBackIosNew, ChatBubble, ChatBubbleOutline, CloudDownloadOutlined, DiamondOutlined, Favorite, FavoriteBorder, ReportOutlined } from '@mui/icons-material'
 import { Avatar, Backdrop, Chip, CircularProgress, IconButton, Link, TextField, Tooltip } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import BookmarkButton from '../components/BookmarkButton'
 import Navbar from '../components/UI/Navbar'
 
-const PostDetail = ({ getPostById, match, post }) => {
-    const [loading, setLoading] = useState(true);
+const PostDetail = ({ getBookmarkPost, getPostById, match, post, loading, setLoading, getPostLikes, postLike, getPostTags }) => {
+    const payloadGetBookmark = {
+        PostID: match.params.id,
+        UserID: localStorage.getItem('uid'),
+    }
+
+    const [isBookmarked, setIsBookmarked] = useState(undefined);
 
     useEffect(() => {
-        getPostById(match.params.id).then(() => setLoading(false), (error) => {
-            toast.error('Failed to load post')
-            console.log(error)
-        });
-    }, [setLoading])
+        const fetchData = async () => {
+            await getPostById(match.params.id);
+            await getPostLikes(`/$count?$filter=PostID eq ${match.params.id}`)
+            await getPostTags(`?$filter=PostID eq ${match.params.id} &$expand=Tag&$select=Tag`)
+            await getBookmarkPost(payloadGetBookmark).then(() => {
+                setIsBookmarked(true)
+            }, () => {
+                setIsBookmarked(false)
+            })
+            setLoading(false);
+        }
+        fetchData();
+
+    }, [setLoading, getPostById, getPostLikes, getPostTags, getBookmarkPost, isBookmarked])
 
     return (
         <div>
@@ -32,7 +45,7 @@ const PostDetail = ({ getPostById, match, post }) => {
                     <div className='art-stage px-[100px] py-6 h-full relative'>
                         <div className='flex justify-center items-center h-full'>
                             <div className="file-wrapper  h-full bg-slate-100 flex justify-center items-center">
-                                <img className='max-h-full shadow-lg' src={post.fileURL} alt='art-content' />
+                                {post.attachmentType === 1 ? <video autoPlay controls className='max-h-full shadow-lg z-50' src={post.fileURL} alt='art-content' /> : <img className='max-h-full shadow-lg' src={post.fileURL} alt='art-content' />}
                             </div>
                             <div className='absolute top-0 right-0 left-0 bottom-0 h-full w-full py-6 text-neutral-50 opacity-5 hover:text-black hover:opacity-100 transition-all duratin-500'>
                                 <Link href="/" color='inherit' underline='none' className='transition-all duration-300 hover:text-pink-400 hidden justify-center items-center gap-1 left-[27px] relative px-4 lg:inline-flex'>
@@ -44,18 +57,15 @@ const PostDetail = ({ getPostById, match, post }) => {
                     </div>
                     {/* Action bar */}
                     <div className='flex items-center h-[72px] pl-8 pr-2 w-full xl:w-1/2 lg:w-4/5 mx-auto'>
-                        <div className='cursor-pointer flex justify-center items-center gap-1 font-bold border-neutral-400 border-r pr-4' onClick={() => alert('clicked!')}>
-                            <BookmarkAddOutlined />
-                            Bookmark this post
-                        </div>
-                        <div className='flex justify-center items-center gap-1 font-bold border-neutral-400 border-r px-4'>
+                        <BookmarkButton bookmarkStatus={isBookmarked} />
+                        <a href="#comment-input" className='hover:text-pink-400 duration-300 transition-all flex justify-center items-center gap-1 font-bold border-neutral-400 border-r px-4'>
                             <ChatBubbleOutline />
                             Comment
-                        </div>
-                        <div className='flex justify-center items-center gap-1 font-bold border-neutral-400 px-4'>
+                        </a>
+                        <button className='hover:text-pink-400 duration-300 transition-all flex justify-center items-center gap-1 font-bold border-neutral-400 px-4'>
                             <DiamondOutlined />
                             Donate
-                        </div>
+                        </button>
                         <div className='flex justify-center items-center gap-3 font-bold border-neutral-400 ml-auto px-4'>
                             <Tooltip arrow title="Like" placement="top">
                                 <IconButton size="large" className='p-0'>
@@ -106,7 +116,7 @@ const PostDetail = ({ getPostById, match, post }) => {
                         <div className='flex gap-[16px] text-sm text-neutral-500 mb-6 mt-6 general-info'>
                             <div className='flex gap-2'>
                                 <Favorite fontSize='small' />
-                                200 Likes
+                                {postLike} Likes
                             </div>
                             <div className='flex gap-2'>
                                 <ChatBubble fontSize='small' />
@@ -147,7 +157,7 @@ const PostDetail = ({ getPostById, match, post }) => {
                                 <a href='#'>
                                     <Avatar alt="Username" />
                                 </a>
-                                <TextField multiline className='grow' label=" " rows={5} placeholder="Write a comment" helperText="Press enter to submit" />
+                                <TextField id="comment-input" multiline className='grow' label=" " rows={5} placeholder="Write a comment" helperText="Press enter to submit" />
                             </div>
                             {/* Comments -> can use map method here */}
                             <div className='flex gap-2 mb-4'>
@@ -202,10 +212,17 @@ const PostDetail = ({ getPostById, match, post }) => {
 
 const mapDispatchToProps = (dispatch) => ({
     getPostById: dispatch.postModel.getPostById,
+    setLoading: dispatch.globalModel.setLoading,
+    getPostLikes: dispatch.postModel.getPostLikes,
+    getPostTags: dispatch.postModel.getPostTags,
+    getBookmarkPost: dispatch.postModel.getBookmarkPost,
 })
 
 const mapStateToProps = (state) => ({
     post: state.postModel.post,
+    loading: state.globalModel.loading,
+    postLike: state.postModel.postLike,
+    postTag: state.postModel.postTag,
 })
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostDetail));

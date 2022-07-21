@@ -1,6 +1,6 @@
-import { Box, AppBar, Toolbar, IconButton, Menu, MenuItem, Button, Avatar, ListItemIcon, Divider, InputBase, useScrollTrigger, Slide } from "@mui/material";
+import { Box, AppBar, Toolbar, IconButton, Menu, MenuItem, Button, Avatar, ListItemIcon, Divider, InputBase, useScrollTrigger, Slide, Modal, TextField } from "@mui/material";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import logo from ".././../assets/images/Logo.png";
 import { Container } from "@mui/system";
 import { AccountCircle, AddBox, AddCircle, Lock, Logout, Search } from "@mui/icons-material";
@@ -8,6 +8,11 @@ import { toast } from "react-toastify";
 import { withRouter } from "react-router-dom";
 import { pink } from "@mui/material/colors";
 import { styled, alpha } from '@mui/material/styles';
+import * as yup from "yup";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import axios from "axios";
+import { API_URL } from "../../api/agent";
 
 const SearchBar = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -50,6 +55,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const schema = yup.object().shape({
+  currentPassword: yup.string().required(),
+  newPassword: yup.string().required(),
+  confirmPassword: yup.string().oneOf([yup.ref("newPassword", null)])
+})
+
 function HideOnScroll(props) {
   const { children } = props;
   const trigger = useScrollTrigger();
@@ -60,7 +71,19 @@ function HideOnScroll(props) {
   )
 }
 
-function Navbar({ history }) {
+function Navbar({ history, match }) {
+  const { register, handleSubmit, control, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
+  const currentPassword = useRef();
+  const newPassword = useRef();
+  const confirmPassword = useRef();
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpenModal = () => {
+    handleClose();
+    setOpenModal(true)
+  };
+  const handleCloseModal = () => setOpenModal(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -83,17 +106,47 @@ function Navbar({ history }) {
     }
   }
 
+  const onSuccess = async () => {
+    const payload = {
+      password: confirmPassword.current.value
+    }
+    axios
+      .patch(`${API_URL}/users/${match.params.id}`, payload)
+      .then(() => {
+        toast.success("Your password has been updated");
+      });
+  }
+
   return (
     <HideOnScroll>
       <AppBar position="sticky" className="text-slate-600" color="inherit" sx={{ backgroundColor: "rgb(252, 231, 243)" }}>
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+        >
+          <form onSubmit={handleSubmit(onSuccess)}>
+            <div className="flex w-screen h-screen justify-center items-center">
+              <div className="w-1/3 bg-white p-8">
+                <h3 className="font-bold text-2xl text-center">Change your password</h3>
+                <Controller control={control} name="currentPassword" render={() => {
+                  <TextField inputRef={currentPassword} label="Current password" placeholder="Current password" fullWidth />
+                }} />
+
+                <TextField inputRef={newPassword} label="New password" placeholder="New password" fullWidth />
+                <TextField inputRef={confirmPassword} label="Confirm new password" placeholder="Confirm new password" fullWidth />
+                <Button type="submit">Change password</Button>
+              </div>
+            </div>
+          </form>
+        </Modal>
         <Container maxWidth="xl">
           <Toolbar className="gap-4 justify-between" disableGutters>
             <a href="/">
               <img src={logo} alt="logo" />
             </a>
-            <IconButton href="/post-form/create" sx={{ display: { xs: 'flex', sm: 'none' } }}><AddCircle fontSize="large" className="text-pink-300" /></IconButton>
-            <Button href="/post-form/create" sx={{ display: { xs: 'none', sm: 'flex', backgroundColor: pink[200] } }} variant="contained" startIcon={<AddBox />}>New post</Button>
-            <div className="grow flex sm:flex justify-center ">
+            <IconButton href="/post-form/create" sx={{ display: { xs: 'flex', md: 'none' } }}><AddCircle fontSize="large" className="text-pink-300" /></IconButton>
+            <Button href="/post-form/create" sx={{ display: { xs: 'none', md: 'flex', backgroundColor: pink[200] } }} variant="contained" startIcon={<AddBox />}>New post</Button>
+            <div className="flex justify-center grow">
               <SearchBar>
                 <SearchIconWrapper>
                   <Search />
@@ -105,16 +158,15 @@ function Navbar({ history }) {
               </SearchBar>
             </div>
             {localStorage.token ? <Box className="flex gap-4 min-h">
-              <div onClick={handleClick} className="cursor-pointer">
-                <span className="text-center mr-3 text-slate-700 font-bold text-lg truncate">{localStorage.username}</span>
-                <Avatar sx={{ display: "inline-flex", width: '37px', height: '37px' }} alt={localStorage.username} src="/static/images/avatar/2.jpg" />
+              <div onClick={handleClick} className="cursor-pointer flex items-center">
+                <span className="text-center mr-3 text-slate-700 font-bold text-lg hidden md:block">{localStorage.username}</span>
+                <Avatar sx={{ display: "inline-flex", width: '37px', height: '37px' }} alt={localStorage.username} src={localStorage.getItem('avatar')} />
               </div>
               <Menu
                 anchorEl={anchorEl}
                 id="account-menu"
                 open={open}
                 onClose={handleClose}
-                onClick={handleClose}
                 PaperProps={{
                   elevation: 0,
                   sx: {
@@ -150,7 +202,7 @@ function Navbar({ history }) {
                     <AccountCircle />
                   </ListItemIcon> Profile
                 </MenuItem>
-                <MenuItem onClick={() => handleUserClick('Change Password')}>
+                <MenuItem onClick={handleOpenModal}>
                   <ListItemIcon>
                     <Lock />
                   </ListItemIcon> Change password

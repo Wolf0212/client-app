@@ -10,11 +10,11 @@ function Homepage({ postList, getPostList }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getPostList("?$expand=Uploader");
+      await getPostList("?$expand=Uploader&$filter=Active eq true&$orderBy=UploadTime desc");
+      setLoading(false);
     }
     fetchData();
-    setLoading(false);
-  }, [getPostList])
+  }, [getPostList, setLoading])
 
   return (
     <div>
@@ -30,7 +30,6 @@ function Homepage({ postList, getPostList }) {
             <SelectionBar />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {postList.map((item) => {
-                console.log(item);
                 return <PostItem key={item.PostID} item={item} />
               })}
             </div>

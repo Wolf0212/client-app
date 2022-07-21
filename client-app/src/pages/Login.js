@@ -47,6 +47,7 @@ function Login({ history }) {
             email: email.current.value,
             firstName: firstName.current.value,
             lastName: lastName.current.value,
+            AvatarUrl: "https://imgur.com/a/R7RNOXu",
         }
         await axios.post(API_URL + "/Users", payload).then(() => {
             toast.success("Register successfully");
@@ -71,6 +72,7 @@ function Login({ history }) {
             localStorage.setItem("email", decoded.Email);
             localStorage.setItem("username", decoded.Username);
             localStorage.setItem("uid", decoded.UserId);
+            localStorage.setItem("avatar", decoded.AvatarUrl);
             setLoading(false);
             history.push("/");
         }, () => {
