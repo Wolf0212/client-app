@@ -1,14 +1,32 @@
-import { Add, ArrowBackIosNew, BookmarkAdd, BookmarkAddOutlined, BookmarkAddRounded, ChatBubble, ChatBubbleOutline, CloudDownloadOutlined, DiamondOutlined, Favorite, FavoriteBorder, FavoriteOutlined, Report, ReportOutlined } from '@mui/icons-material'
-import { Avatar, Chip, IconButton, Link, TextField, Tooltip } from '@mui/material'
-import { pink } from '@mui/material/colors'
-import React from 'react'
+import { async } from '@firebase/util'
+import { Add, ArrowBackIosNew, BookmarkAddOutlined, ChatBubble, ChatBubbleOutline, CloudDownloadOutlined, DiamondOutlined, Favorite, FavoriteBorder, ReportOutlined } from '@mui/icons-material'
+import { Avatar, Backdrop, Chip, CircularProgress, IconButton, Link, TextField, Tooltip } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { connect } from 'react-redux'
 import Navbar from '../components/UI/Navbar'
 
-export const PostDetail = () => {
+const PostDetail = ({ getPostById }) => {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await getPostById(2);
+        }
+        fetchData();
+        setLoading(false);
+    }, [])
+
     return (
         <div>
             <Navbar></Navbar>
-            <div className="h-screen max-h-[calc(100vh-136px)]">
+            {loading == true ? 
+            <Backdrop
+                sx={{ color: '#fff' }}
+                open={true}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop> : 
+            <div className="h-screen max-h-[calc(100vh-136px)] bg-slate-100">
                 {/* Content view */}
                 <div className='art-stage px-[100px] py-6 h-full relative'>
                     <div className='flex justify-center items-center h-full '>
@@ -175,6 +193,14 @@ export const PostDetail = () => {
                     </div>
                 </div>
             </div>
+            }
+
         </div >
     )
 }
+
+const mapDispatchToProps = (dispatch) => ({
+    getPostById: dispatch.postModel.getPostById,
+})
+
+export default connect(null, mapDispatchToProps)(PostDetail);

@@ -7,7 +7,7 @@ import AdminPage from "./pages/AdminPage.js";
 import Login from "./pages/Login.js";
 import { ToastContainer } from "react-toastify";
 import React from "react";
-import { PostDetail } from "./pages/PostDetail.js";
+import PostDetail from "./pages/PostDetail.js";
 import { PostForm } from "./pages/PostForm.js";
 import { Profile } from "./pages/Profile.js";
 import { ProfileTab } from "./components/ProfileTab";
@@ -25,8 +25,9 @@ function App() {
             component={PostForm}
           />
           <Route path={"/profile"} component={Profile} />
-          <Route path={"/profiletab"} component={ProfileTab} />
-          <Route path={"/post-detail"} component={PostDetail} />
+
+          <Route path={"/post-detail/:id"} component={PostDetail} />
+
           <Route path={"/login"} component={Login} />
           <Route path={"/admin"} component={AdminPage} />
           <Route path={["/", "/homepage"]} component={Homepage} />
