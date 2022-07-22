@@ -10,7 +10,7 @@ import TagsTable from "../components/Tables/TagsTable";
 import Report from "../components/Report/Report";
 import UserForm from "../components/Forms/UserForm";
 import UserDetail from "../components/Details/UserDetail";
-import PostDetail from "./PostDetail";
+import PostDetail from "./PostDetail.js";
 
 const AdminPage = (props) => {
   return (
@@ -39,11 +39,7 @@ const AdminPage = (props) => {
               path="/admin/users/:id/delete"
               component={UsersTable}
             ></Route>
-            <Route
-              exact
-              path="admin/posts/:id/details"
-              component={PostDetail}
-            ></Route>
+
             <Route exact path="/admin/posts" component={PostsTable}></Route>
             <Route exact path="/admin/reports" component={ReportsTable}></Route>
             <Route exact path="/admin/tags" component={TagsTable}></Route>

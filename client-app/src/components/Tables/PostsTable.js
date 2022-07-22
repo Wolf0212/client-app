@@ -14,6 +14,7 @@ import {
   VisibilityOff,
   Visibility,
   Search,
+  Delete,
 } from "@mui/icons-material";
 
 import { useEffect, useState, useRef } from "react";
@@ -21,6 +22,7 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 
 import { API_URL } from "../../api/agent";
+import { toast } from "react-toastify";
 
 const PostsTable = () => {
   const [postsData, setPostsData] = useState(null);
@@ -40,16 +42,28 @@ const PostsTable = () => {
         console.log(response);
         const posts = response.data.value.map((data) => {
           return (
-            <tr key={data.PostID}>
+            <tr className={!data.Active && "table-danger"} key={data.PostID}>
               <td>{data.Title}</td>
               <td>{data.Description}</td>
               <td>{data.UploadTime}</td>
               <td>
-                <Link to={`/admin/posts/${data.PostID}/details`}>
+                <Link to={`/post-detail/${data.PostID}`}>
                   <Info />
                 </Link>
                 {" | "}
-                <Link to={`/admin/posts/${data.PostID}/toggle`}>
+                <Link
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (
+                      window.confirm(
+                        "Are you sure you want to delete this post?"
+                      )
+                    ) {
+                      Delete(data.PostID);
+                    }
+                  }}
+                  to={`#`}
+                >
                   <VisibilityOff></VisibilityOff>
                 </Link>
               </td>
@@ -74,18 +88,31 @@ const PostsTable = () => {
         }&$top=${numberRecords}`
       )
       .then((response) => {
+        console.log(response);
         const posts = response.data.value.map((data) => {
           return (
-            <tr key={data.PostID}>
+            <tr className={!data.Active && "table-danger"} key={data.PostID}>
               <td>{data.Title}</td>
               <td>{data.Description}</td>
               <td>{data.UploadTime}</td>
               <td>
-                <Link to={`/admin/posts/${data.PostID}/details`}>
+                <Link to={`/post-detail/${data.PostID}`}>
                   <Info />
                 </Link>
                 {" | "}
-                <Link to={`/admin/posts/${data.PostID}/toggle`}>
+                <Link
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (
+                      window.confirm(
+                        "Are you sure you want to delete this post?"
+                      )
+                    ) {
+                      Delete(data.PostID);
+                    }
+                  }}
+                  to={`#`}
+                >
                   <VisibilityOff></VisibilityOff>
                 </Link>
               </td>
@@ -121,6 +148,12 @@ const PostsTable = () => {
       setPagination(paginationItems);
     });
   };
+  function Delete(id) {
+    axios.delete(`${API_URL}/Posts/${id}`).then(() => {
+      toast.success("Deleted");
+      window.location.reload();
+    });
+  }
 
   useEffect(() => {
     setAxiosDefaultHeader();
