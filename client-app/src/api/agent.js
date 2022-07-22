@@ -8,8 +8,7 @@ axios.interceptors.response.use(undefined, function (error) {
   if (error.response.status === 400) {
     if (error.response.data.value != null) {
       toast.error(error.response.data.value);
-    }
-    else {
+    } else {
       toast.error("Check your input again!");
     }
   }
@@ -20,6 +19,7 @@ axios.interceptors.response.use(undefined, function (error) {
   throw error;
 });
 
-axios.defaults.headers.common["Authorization"] = "Bearer " + localStorage.token;
+axios.defaults.headers.common["Authorization"] =
+  "Bearer " + localStorage.getItem("token");
 
 export const API_URL = "https://localhost:5001/odata";
