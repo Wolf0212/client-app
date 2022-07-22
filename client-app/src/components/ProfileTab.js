@@ -28,6 +28,8 @@ export const ProfileTab = () => {
   const confirmPasswordInput = useRef();
   const avatarUrlInput = useRef();
 
+  let password;
+
   const tempImageURL =
     "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80";
 
@@ -37,18 +39,22 @@ export const ProfileTab = () => {
 
   const UpdateProfile = (e) => {
     e.preventDefault();
-    if (CheckConfirmPassword) {
+    console.log(password);
+    if (CheckConfirmPassword() == true) {
       const payload = {
         firstName: firstNameInput.current.value,
         lastName: lastNameInput.current.value,
         username: usernameInput.current.value,
+      };
+      if (password !== passwordInput.current.value) {
+        console.log("inner");
+        payload.password = passwordInput.current.value;
       }
-      axios
-        .patch(`${API_URL}/users/${id}`, payload)
-        .then(() => {
-          toast.success("Update success");
-          window.location.reload();
-        });
+      console.log(payload);
+      axios.patch(`${API_URL}/users/${id}`, payload).then(() => {
+        toast.success("Update success");
+        window.location.reload();
+      });
     } else {
       toast.error("Please put the same password in confirm password field");
     }
@@ -90,6 +96,7 @@ export const ProfileTab = () => {
                   <Form.Group as={Col}>
                     <Form.Label>First name</Form.Label>
                     <Form.Control
+                      required
                       ref={firstNameInput}
                       defaultValue={response.data.FirstName}
                     ></Form.Control>
@@ -97,6 +104,7 @@ export const ProfileTab = () => {
                   <Form.Group as={Col}>
                     <Form.Label>Last name</Form.Label>
                     <Form.Control
+                      required
                       ref={lastNameInput}
                       defaultValue={response.data.LastName}
                     ></Form.Control>
@@ -106,18 +114,34 @@ export const ProfileTab = () => {
                   <Form.Group as={Col}>
                     <Form.Label>Username</Form.Label>
                     <Form.Control
+                      required
                       ref={usernameInput}
                       defaultValue={response.data.Username}
+                    ></Form.Control>
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                      ref={passwordInput}
+                      required
+                      type="password"
+                      defaultValue={response.data.Password}
                     ></Form.Control>
                   </Form.Group>
                 </Row>
                 <Row className="mb-3">
                   <Col>
-                    <Form.Control
-                      hidden
-                      ref={avatarUrlInput}
-                    ></Form.Control>
+                    <Form.Control hidden ref={avatarUrlInput}></Form.Control>
                   </Col>
+                  <Form.Group as={Col}>
+                    <Form.Label>Confirm Password</Form.Label>
+                    <Form.Control
+                      ref={confirmPasswordInput}
+                      required
+                      type="password"
+                      defaultValue={response.data.Password}
+                    ></Form.Control>
+                  </Form.Group>
                 </Row>
                 <Button className="text-blue-800" type="submit">
                   Save Profile
@@ -128,6 +152,7 @@ export const ProfileTab = () => {
         </Container>
       );
       setUserProfile(userInfo);
+      password = response.data.Password;
     });
   };
 

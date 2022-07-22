@@ -65,6 +65,7 @@ const TagsTable = () => {
                       id={`input${data.TagID}`}
                       type="text"
                       placeholder="Enter Tag name"
+                      required
                     ></Form.Control>
                   </Col>
                   <Col>
@@ -163,6 +164,7 @@ const TagsTable = () => {
                   <Row>
                     <Col md={6}>
                       <Form.Control
+                        required
                         id={`input${data.TagID}`}
                         type="text"
                         placeholder="Enter Tag name"

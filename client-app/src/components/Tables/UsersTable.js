@@ -147,14 +147,16 @@ const UsersTable = () => {
   };
 
   const fetchPagination = async (link) => {
+    console.log(link);
     await axios.get(link).then((response) => {
       const totalRecord = response.data.value.length;
       let pageNumber = totalRecord / numberRecords;
       if (totalRecord % numberRecords !== 0) {
         pageNumber++;
       }
+      console.log(pageNumber);
       let paginationItems = [];
-      for (let i = 0; i < pageNumber - 1; i++) {
+      for (let i = 0; i < Math.floor(pageNumber); i++) {
         paginationItems.push(
           <Pagination.Item
             key={i}

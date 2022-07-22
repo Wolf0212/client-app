@@ -32,30 +32,24 @@ const PostsTable = () => {
   const searchString = useRef();
   const SubmitSearchHandler = (e) => {
     e.preventDefault();
-    fetchPagination(
-      `${API_URL}/Posts?$filter=contains(Title, '${searchString.current.value}')`
-    );
-    setURL(
-      `${API_URL}/Posts?$filter=contains(Title, '${searchString.current.value}')`
-    );
     axios
       .get(
         `${API_URL}/Posts?$filter=contains(Title, '${searchString.current.value}')`
       )
       .then((response) => {
         console.log(response);
-        const posts = response.data.map((data) => {
+        const posts = response.data.value.map((data) => {
           return (
-            <tr key={data.postID}>
-              <td>{data.title}</td>
-              <td>{data.description}</td>
-              <td>{data.uploadTime}</td>
+            <tr key={data.PostID}>
+              <td>{data.Title}</td>
+              <td>{data.Description}</td>
+              <td>{data.UploadTime}</td>
               <td>
-                <Link to={`/admin/posts/${data.postID}/details`}>
+                <Link to={`/admin/posts/${data.PostID}/details`}>
                   <Info />
                 </Link>
                 {" | "}
-                <Link to={`/admin/posts/${data.postID}/toggle`}>
+                <Link to={`/admin/posts/${data.PostID}/toggle`}>
                   <VisibilityOff></VisibilityOff>
                 </Link>
               </td>
@@ -73,16 +67,6 @@ const PostsTable = () => {
   };
 
   const fetchData = () => {
-    fetchPagination(
-      `${API_URL}/Posts?$skip=${
-        pageIndex * numberRecords
-      }&$top=${numberRecords}`
-    );
-    setURL(
-      `${API_URL}/Posts?$skip=${
-        pageIndex * numberRecords
-      }&$top=${numberRecords}`
-    );
     return axios
       .get(
         `${API_URL}/Posts?$skip=${
@@ -90,18 +74,18 @@ const PostsTable = () => {
         }&$top=${numberRecords}`
       )
       .then((response) => {
-        const posts = response.data.map((data) => {
+        const posts = response.data.value.map((data) => {
           return (
-            <tr key={data.postID}>
-              <td>{data.title}</td>
-              <td>{data.description}</td>
-              <td>{data.uploadTime}</td>
+            <tr key={data.PostID}>
+              <td>{data.Title}</td>
+              <td>{data.Description}</td>
+              <td>{data.UploadTime}</td>
               <td>
-                <Link to={`/admin/posts/${data.postID}/details`}>
+                <Link to={`/admin/posts/${data.PostID}/details`}>
                   <Info />
                 </Link>
                 {" | "}
-                <Link to={`/admin/posts/${data.postID}/toggle`}>
+                <Link to={`/admin/posts/${data.PostID}/toggle`}>
                   <VisibilityOff></VisibilityOff>
                 </Link>
               </td>
@@ -113,16 +97,15 @@ const PostsTable = () => {
   };
 
   const fetchPagination = (link) => {
-    console.log(link);
-    return axios.get(link).then((response) => {
-      console.log(response);
-      const totalRecord = response.data.length;
+    axios.get(link).then((response) => {
+      const totalRecord = response.data.value.length;
       let pageNumber = totalRecord / numberRecords;
       if (totalRecord % numberRecords !== 0) {
         pageNumber++;
       }
+      console.log(pageNumber);
       let paginationItems = [];
-      for (let i = 0; i < pageNumber - 1; i++) {
+      for (let i = 0; i < Math.floor(pageNumber); i++) {
         paginationItems.push(
           <Pagination.Item
             key={i}
@@ -142,7 +125,7 @@ const PostsTable = () => {
   useEffect(() => {
     setAxiosDefaultHeader();
     fetchData();
-    fetchPagination(url);
+    fetchPagination();
   }, [pageIndex]);
 
   return (
